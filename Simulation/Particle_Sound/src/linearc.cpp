@@ -471,7 +471,7 @@ void lu_dcmp(Matrix& M, Matrix& N){
 /////////////////////////////////////////////////////
 
 // Solve equation A X = B where X,B are either matrices or vectors, using LU decomposition.
-Array solve(Matrix& A,Array& b,bool decomposed){
+Array solve(Matrix A,Array b,bool decomposed){
     
     // If the matrix is not in LU decompose it to LU
     Matrix M = !decomposed ? lu_dcmp(A) : A; 
@@ -497,7 +497,7 @@ Array solve(Matrix& A,Array& b,bool decomposed){
 }
 
 // Assuming the matrix is not decomposed
-Array solve(Matrix& A,Array& b){
+Array solve(Matrix A,Array b){
     return solve(A,b,false);
 }
 
@@ -530,7 +530,7 @@ void solve(Matrix& A,Array& b, Array& x){
 
 
 // To do the same thing but with X, B matrices:
-Matrix solve(Matrix& A, Matrix& b, bool decomposed){
+Matrix solve(Matrix A, Matrix b, bool decomposed){
     
     // If the matrix is not in LU decompose it to LU
     Matrix M = !decomposed ? lu_dcmp(A) : A; 
@@ -551,7 +551,7 @@ Matrix solve(Matrix& A, Matrix& b, bool decomposed){
 
 
 // To do the same thing but with X, B matrices assuming decomposed = false:
-Matrix solve(Matrix& A, Matrix& b){
+Matrix solve(Matrix A, Matrix b){
     return solve(A,b,false);
 }
 
@@ -660,7 +660,7 @@ Array tridiag(Matrix& M, Array& b){
 
 // Solves a block tridiagonal system
 // We are slightly modifying thomas algorithm
-Array block_tridiag(Matrix* A,int A_SIZE,Matrix* B,int B_SIZE,Matrix* D,int D_SIZE,Array* b,int b_SIZE){
+Array* block_tridiag(Matrix* A,int A_SIZE,Matrix* B,int B_SIZE,Matrix* D,int D_SIZE,Array* b,int b_SIZE){
 
     Matrix* Gamma = new Matrix[A_SIZE];
     Array* Beta = new Array[D_SIZE];
@@ -671,18 +671,98 @@ Array block_tridiag(Matrix* A,int A_SIZE,Matrix* B,int B_SIZE,Matrix* D,int D_SI
     Beta[0] = solve(lu,b[0],true);
 
     // Forward propagation
-    for(int i=1; i<D_SIZE; i++){
-        
+    for(int i=1; i<D_SIZE; i++){    
         // get the decomposition of the divisor
         lu = lu_dcmp(D[i] - B[i-1]*Gamma[i-1]);
+
+        // Calculate the Beta and Gammas
         if (i < A_SIZE)Gamma[i] = solve(lu,A[i],true);
-        Beta[i] = 
-
-        // if(!(D[i] - B[i-1]*gamma[i-1])) throw "Tridiag division by 0";
-
-        // if (i<A.size()) gamma[i] = A[i]/(D[i] - B[i-1]*gamma[i-1]);
-        // beta[i] = (b[i]-beta[i-1]*B[i-1])/(D[i] - B[i-1]*gamma[i-1]);
-
+        Beta[i] = solve(lu,b[i]-(B[i-1]*Beta[i-1]));
     }
+
+    // Backpropagation
+    Array* x = new Array[D_SIZE];
+    x[D_SIZE-1] = Beta[D_SIZE-1];
+    for (int i=D_SIZE-2; i>=0;i--){
+        x[i] = Beta[i] - Gamma[i] * x[i+1];
+    }
+
+    return x;
+}
+
+// Solves block tridiagonal system by passing the total matrix and the dimension size
+Array block_tridiag(Matrix MAT,Array arr, int N, int M){
+    // First we separate the matrix to the submatrices
+
+    // Definition of component matrices
+    Matrix* A = new Matrix[M-1];
+    Matrix* B = new Matrix[M-1];
+    Matrix* D = new Matrix[M];
+    Array* b = new Array[M];
+
+    for (int i=0;i<M;i++){
+        A[i] = Matrix(N,N);
+        B[i] = Matrix(N,N);
+        D[i] = Matrix(N,N);
+        b[i] = Array(N);
+    }
+
+
+    // To calculate the diagonals
+    for(int i=0;i<M;i++){
+        for(int j=0;j<N;j++){
+
+            // Main Diagonal Elements
+            if (j>0)    D[i][j][j-1] = MAT[j+i*N][j-1+i*N];
+            if (j<N-1)  D[i][j][j+1] = MAT[j+i*N][j+1+i*N];
+            D[i][j][j] = MAT[j+i*N][j+i*N];
+
+            // Upper diagonal elements
+            if (i<M-1){
+                A[i][j][j] = MAT[i*N+N+j][i*N+N+j]; 
+            }
+
+            // Lower diagonal elements
+            if (i>0){
+               B[i-1][j][j] = MAT[i*N-N+j][i*N-N+j];
+            }
+
+            // Equal to vector
+            b[i][j] = arr[j+i*N];
+        }
+    }
+
+    // Now solve
+    Array* xx = block_tridiag(A,M-1,B,M-1,D,M,b,M);
+    
+    // Put everything to a vector
+    Array x(N*M);
+    for (int i=0;i<M;i++){
+        for (int j=0;j<N;j++){
+            x[i*N+j] = xx[i][j];
+        }
+    }
+
+    return x;
+}
+
+// Uses tridiagonal solving on matrix MAT
+// Finds the M by N dimension by assuming the tridiagonal shape
+Array block_tridiag(Matrix MAT,Array arr){
+
+    // Find M and N
+    int N(-1),M;
+    for (int i=2;i<MAT.col_size();i++){
+        if (MAT[0][i]){
+            N = i+1;
+            break;
+        }
+    }
+
+    if (N==-1) throw "Block tridiagonal of incorrectly formatted matrix";
+
+    M = int(MAT.col_size()/N);
+
+    return block_tridiag(MAT,arr,N,M);
 
 }
