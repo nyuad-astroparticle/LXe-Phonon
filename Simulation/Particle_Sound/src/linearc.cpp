@@ -295,6 +295,26 @@ Matrix Matrix::operator*(Matrix M){
     return mat;
 }
 
+// Matrix multiplication with vector
+Array Matrix::operator*(Array M){
+    if (!((this->col_size() == M.size()))){
+        throw "Multiplying incompatible matrices";
+    }
+
+    // First create a new matrix object identical to M
+    double* ptr = new double[this->row_size()];
+    Array mat(ptr,this->row_size());
+
+    // Do the product
+    for (int i=0;i<mat.size();i++){
+        double sum = 0;
+        for (int n=0;n<this->col_size();n++) sum += this->ptr[i][n]*M[n];
+        mat[i] = sum;
+    }
+
+    return mat;
+}
+
 
 // Adds one matrix to another
 Matrix Matrix::operator+=(Matrix M){
@@ -391,7 +411,7 @@ void lu_dcmp_replace(Matrix& M){
 
 
 //Decomposes M into a new matrix without replacing M
-Matrix lu_dcmp(Matrix& M){
+Matrix lu_dcmp(Matrix M){
     // First create a new matrix object identical to M
     double** ptr = new double*[M.row_size()];
     Matrix mat(ptr,M.row_size(),M.col_size());
@@ -645,16 +665,18 @@ Array block_tridiag(Matrix* A,int A_SIZE,Matrix* B,int B_SIZE,Matrix* D,int D_SI
     Matrix* Gamma = new Matrix[A_SIZE];
     Array* Beta = new Array[D_SIZE];
 
-
+    // Decompose the original matrix
     Matrix lu = lu_dcmp(D[0]);
-
+    Gamma[0] = solve(lu,A[0],true);
+    Beta[0] = solve(lu,b[0],true);
 
     // Forward propagation
-    for(int i=0; i<D_SIZE; i++){
+    for(int i=1; i<D_SIZE; i++){
         
-        if (i < A_SIZE){
-
-        }
+        // get the decomposition of the divisor
+        lu = lu_dcmp(D[i] - B[i-1]*Gamma[i-1]);
+        if (i < A_SIZE)Gamma[i] = solve(lu,A[i],true);
+        Beta[i] = 
 
         // if(!(D[i] - B[i-1]*gamma[i-1])) throw "Tridiag division by 0";
 

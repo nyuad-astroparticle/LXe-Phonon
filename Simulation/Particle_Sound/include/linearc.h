@@ -62,6 +62,7 @@ class Matrix{
 
     // Overload some opeartors
     Matrix operator*(Matrix);
+    Array operator*(Array);
     Matrix operator+(Matrix);
     Matrix operator-(Matrix);
     Matrix operator*(double);
@@ -98,7 +99,7 @@ Matrix operator*(double,Matrix);
 // LU Decomposition /////////////////////////////////
 /////////////////////////////////////////////////////
 // Uses Crout's Algorithm to compute LU decomposition in O(n^3) for nxn
-Matrix lu_dcmp(Matrix&);            // Returns the decomposed version (takes O(n^2)) to create one
+Matrix lu_dcmp(Matrix);            // Returns the decomposed version (takes O(n^2)) to create one
 void lu_dcmp_replace(Matrix&);      // replaces the current matrix with it's decomposed vesion
 void lu_dcmp(Matrix&,Matrix&);      // replaces the second matrix provided
 
