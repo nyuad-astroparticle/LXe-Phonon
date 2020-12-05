@@ -18,8 +18,8 @@ class Fluid{
     public:
     // Constructors
     Fluid();
-    Fluid(const char*);                 // Initializes from file
-    Fluid(double,double,double,double); // Initializes throuhg varibles
+    Fluid(const char*);                          // Initializes from file
+    Fluid(double,double,double,double,double);   // Initializes throuhg varibles
 
     // Mutators
     double get_rest_density();
