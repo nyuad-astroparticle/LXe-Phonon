@@ -223,17 +223,19 @@ void Simulation::create_tridiag(Matrix* A, Matrix* B, Matrix* D){
         // Initialize the D matrix
         for (int i=0; i<Nz; i++){
             D[n][i][i]   = -4*fluid->mu()/(fluid->K()*dx*dx*dt) + fluid->r0()/(fluid->K()*dt*dt);
-            D[n][i][i+1] = fluid->mu()/(fluid->K()*dx*dx*dt);
-            D[n][i][i-1] = fluid->mu()/(fluid->K()*dx*dx*dt);
+            if (i+1 < Nz) D[n][i][i+1] = fluid->mu()/(fluid->K()*dx*dx*dt);
+            if (i-1 > 0 ) D[n][i][i-1] = fluid->mu()/(fluid->K()*dx*dx*dt);
         }
 
-        // Initialize the A and B matrices
-        for (int i=0; i<Nz-1; i++){
-            double r = n*dx;
-            A[n][i][i]  = fluid->mu()/(fluid->K()*dx*dx*dt) + fluid->mu()/(2*r*fluid->K()*dx*dt);
-            
-            r = (n+1)*dx;
-            B[n][i][i]  = fluid->mu()/(fluid->K()*dx*dx*dt) - fluid->mu()/(2*r*fluid->K()*dx*dt);
+        if (n<Nx-1){
+            // Initialize the A and B matrices
+            for (int i=0; i<Nz-1; i++){
+                double r = n*dx;
+                A[n][i][i]  = fluid->mu()/(fluid->K()*dx*dx*dt) + fluid->mu()/(2*r*fluid->K()*dx*dt);
+                
+                r = (n+1)*dx;
+                B[n][i][i]  = fluid->mu()/(fluid->K()*dx*dx*dt) - fluid->mu()/(2*r*fluid->K()*dx*dt);
+            }
         }
     }
 
