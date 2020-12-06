@@ -1,6 +1,8 @@
 #ifndef FLUID_H
 #define FLUID_H
 
+#include <iostream>
+
 /////////////////////////////////////////////////////
 // Fluid Class //////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -40,6 +42,10 @@ class Fluid{
 
     double get_specific_heat_pressure();
     double Cp();
+
+    // Printing functions
+    void print();
+    void print(std::ostream& stream);
 };
 
 

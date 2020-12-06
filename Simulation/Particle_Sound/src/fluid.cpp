@@ -107,3 +107,17 @@ double Fluid::get_specific_heat_pressure(){
 double Fluid::Cp(){
     return get_specific_heat_pressure();
 }
+
+
+// Printing functions
+void Fluid::print(std::ostream& stream){
+    stream << "rest_density:\t" << get_rest_density() << std::endl;
+    stream << "viscocity:\t" << get_viscocity() << std::endl;
+    stream << "compressibility:\t" << get_compressibility() << std::endl;
+    stream << "coefficient_thermal_expansion:\t" << get_coefficient_thermal_expansion() << std::endl;
+    stream << "specific_heat_pressure:\t" << get_specific_heat_pressure() << std::endl;
+}
+
+void Fluid::print(){
+    print(std::cout);
+}
