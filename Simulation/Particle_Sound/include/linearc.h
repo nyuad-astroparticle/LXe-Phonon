@@ -38,6 +38,9 @@ class Array{
     void print(bool);
     void print(std::ostream&);
     void print(bool,std::ostream&);
+
+    // Destructor
+    ~Array();
 };
 
 Array operator*(double,Array);
@@ -88,6 +91,9 @@ class Matrix{
     // Mutators
     int row_size();
     int col_size();
+
+    // Destructor
+    ~Matrix();
 };
 
 Matrix operator*(double,Matrix);
