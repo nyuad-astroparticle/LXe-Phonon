@@ -73,7 +73,7 @@ double Fluid::r0(){
 
 
 double Fluid::get_viscocity(){
-    return rest_density;
+    return viscocity;
 }
 
 double Fluid::mu(){
@@ -82,7 +82,7 @@ double Fluid::mu(){
 
 
 double Fluid::get_compressibility(){
-    return rest_density;
+    return compressibility;
 }
 
 double Fluid::K(){
@@ -91,7 +91,7 @@ double Fluid::K(){
 
 
 double Fluid::get_coefficient_thermal_expansion(){
-    return rest_density;
+    return coefficient_thermal_expansion;
 }
 
 double Fluid::beta(){
@@ -101,7 +101,7 @@ double Fluid::beta(){
 
 
 double Fluid::get_specific_heat_pressure(){
-    return rest_density;
+    return specific_heat_pressure;
 }
 
 double Fluid::Cp(){
