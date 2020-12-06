@@ -30,7 +30,7 @@ class Fluid{
     double r0();
 
     double get_viscocity();
-    double eta();
+    double mu();
 
     double get_compressibility();
     double K();

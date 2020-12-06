@@ -77,7 +77,7 @@ double Fluid::get_viscocity(){
     return rest_density;
 }
 
-double Fluid::eta(){
+double Fluid::mu(){
     return get_viscocity();
 }
 

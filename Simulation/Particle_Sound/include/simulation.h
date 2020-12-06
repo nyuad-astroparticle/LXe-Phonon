@@ -3,7 +3,13 @@
 
 #include <iostream>
 
+#include <fluid.h>
 #include <linearc.h>
+
+
+/////////////////////////////////////////////////////
+// Simulation Class /////////////////////////////////
+/////////////////////////////////////////////////////
 
 // This class is in charge of the simulation
 // Everything that is happening is managed by this class
@@ -33,6 +39,11 @@ class Simulation{
     // We use E instead of dE/dt for obvious reasons here.
     double (*E)(double,double);
 
+    // Pointer to fluid object
+    Fluid* fluid;
+
+
+
     public:
     // Constructors
     Simulation();
@@ -43,6 +54,16 @@ class Simulation{
     // Function that runs for an arbitrary time T, or number of steps
     void run(double);
     void run(int);
+
+    // Set's up the simulatio, after this is called, the sim is ready to run
+    // Called in constructor by default.
+    void setup();
+
+    // Creates the block tridiagonal matrix to solve
+    void create_tridiag(Matrix*,Matrix*,Matrix*);
+    
+    // Creates the left hand side of the matrix equation as a list of vectors
+    void create_lhs(Array*);
 
     // Mutators
     double get_dt();
@@ -59,6 +80,8 @@ class Simulation{
     Array* get_P_prev();
     Array* get_P_curr();
 
+    Fluid* get_fluid();
+
 
     void set_dt(double);
     void set_dx(double);
@@ -73,6 +96,8 @@ class Simulation{
 
     void set_P_prev(Array*);
     void set_P_curr(Array*);
+
+    void set_fluid(Fluid*);
 
 
 
