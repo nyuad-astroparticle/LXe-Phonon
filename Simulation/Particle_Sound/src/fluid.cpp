@@ -46,7 +46,6 @@ Fluid::Fluid(const char* filename){
     }
 
     // Now read the file
-    char c;
     int i = 0;
     double x[5];
     while (!file.eof()) if (file.get() == ':') file >> x[i++];

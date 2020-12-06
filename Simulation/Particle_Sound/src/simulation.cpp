@@ -8,30 +8,189 @@
 /////////////////////////////////////////////////////
 // Constructors /////////////////////////////////////
 
+// Default constructor
+Simulation::Simulation(){
+    dt = 0;
+    dx = 0;
+    dz = 0;
+
+    Nx = 0;
+    Nz = 0;
+
+    R_max = 0;
+    Z_max = 0;
+
+    P_prev = nullptr;
+    P_curr = nullptr;
+    P_next = nullptr;
+
+    A = nullptr;
+    B = nullptr;
+    D = nullptr;
+    lhs = nullptr;
+
+    fluid = nullptr;
+}
 
 
+Simulation::Simulation(double dt, double dx, double dz, double R_max, double Z_max, Fluid* fluid, double (*E)(double,double)){
+    this->dt = dt;
+    this->dx = dx;
+    this->dz = dz;
 
+    this->R_max = R_max;
+    this->Z_max = Z_max;
+
+    this->Nx = R_max/dx;
+    this->Nz = Z_max/dz;
+
+    this->fluid = fluid;
+
+    this->E = E;
+
+    // Setup the matrices
+    setup();
+
+    // Create the solving tridiagonla matrix
+    create_tridiag(A,B,D);
+}
+
+Simulation::Simulation(double dt, double dx, double R_max, double Z_max, Fluid* fluid, double (*E)(double,double)){
+    this->dt = dt;
+    this->dx = dx;
+    this->dz = dx;
+
+    this->R_max = R_max;
+    this->Z_max = Z_max;
+
+    this->Nx = R_max/dx;
+    this->Nz = Z_max/dz;
+
+    this->fluid = fluid;
+
+    this->E = E;
+
+    // Setup the matrices
+    setup();
+
+    // Create the solving tridiagonla matrix
+    create_tridiag(A,B,D);
+}
+
+Simulation::Simulation(double dt, double dx, double dz, int Nx, int Nz, Fluid* fluid, double (*E)(double,double)){
+    this->dt = dt;
+    this->dx = dx;
+    this->dz = dz;
+
+    this->R_max = dx*Nx;
+    this->Z_max = dz*Nz;
+
+    this->Nx = Nx;
+    this->Nz = Nz;
+
+    this->fluid = fluid;
+
+    this->E = E;
+
+    // Setup the matrices
+    setup();
+
+    // Create the solving tridiagonla matrix
+    create_tridiag(A,B,D);
+}
+
+Simulation::Simulation(double dt, double dx, int Nx, int Nz, Fluid* fluid, double (*E)(double,double)){
+    this->dt = dt;
+    this->dx = dx;
+    this->dz = dx;
+
+    this->R_max = dx*Nx;
+    this->Z_max = dz*Nz;
+
+    this->Nx = Nx;
+    this->Nz = Nz;
+
+    this->fluid = fluid;
+
+    this->E = E;
+
+    // Setup the matrices
+    setup();
+
+    // Create the solving tridiagonal matrix
+    create_tridiag(A,B,D);
+}
 
 /////////////////////////////////////////////////////
 // Class Functions //////////////////////////////////
 
+// Set's up the simulatio, after this is called, the sim is ready to run
+// Called in constructor by default.
+void Simulation::setup(){
+    // Create the appropriate matrix arrays and initialize them to zero
+
+    // For the tridiagonal matrix
+    // Center Diagonal
+    D = new Matrix[Nx];
+    for (int n=0; n<Nx; n++) D[n] = Matrix(Nz,Nz);
+
+    // Upper Diagonal
+    A = new Matrix[Nx-1];
+    for (int n=0; n<Nx-1; n++) A[n] = Matrix(Nz,Nz);
+
+    // Lower Diagonal
+    B = new Matrix[Nx-1];
+    for (int n=0; n<Nx-1; n++) B[n] = Matrix(Nz,Nz);
+
+    // Now we initialize the left hand side array and the pressure arrays
+    lhs = new Array[Nx];
+    P_prev = new Array[Nx];
+    P_curr = new Array[Nx];
+    P_next = new Array[Nx];
+
+    for (int i=0; i < Nx; i++) {
+        lhs[i] = Array(Nz);
+        P_prev[i] = Array(Nz);
+        P_curr[i] = Array(Nz);
+        P_next[i] = Array(Nz);
+    }
+}
+
+
+
+// Takes as input a linear vector Nx x Nz and decomposes it to array vectors for tridiag solving.
+void Simulation::convert_to_Array(Array* from, Array* to){
+    for (int i=0; i<Nx; i++){
+        for(int j=0; j<Nz; j++){
+            to[i][j] = (*from)[i*Nx+j];
+        }
+    }
+}
+
+
+// Set intial conditions for P by passing P_prev and P_curr
+void Simulation::set_initial(Array& P_prev,Array& P_curr){
+    convert_to_Array(&P_prev,this->P_prev);
+    convert_to_Array(&P_curr,this->P_curr);
+}
+
 // Creates the tridiagonal matrix to be solved in each iteration.
 // Assumes that the arrays A, B, D, and b exist and are initialised
-// the partition happens every Z_max cells for R_max repetitions
+// the partition happens every Nz cells for Nx repetitions
 void Simulation::create_tridiag(Matrix* A, Matrix* B, Matrix* D){
     
     // For all the submatrices
-    for(int n=0; n<R_max; n++){
+    for(int n=0; n<Nx; n++){
 
         // Initialize the D matrix
-        for (int i=0; i<Z_max; i++){
+        for (int i=0; i<Nz; i++){
             D[n][i][i]   = -4*fluid->mu()/(fluid->K()*dx*dx*dt) + fluid->r0()/(fluid->K()*dt*dt);
             D[n][i][i+1] = fluid->mu()/(fluid->K()*dx*dx*dt);
             D[n][i][i-1] = fluid->mu()/(fluid->K()*dx*dx*dt);
         }
 
         // Initialize the A and B matrices
-        for (int i=0; i<Z_max-1; i++){
+        for (int i=0; i<Nz-1; i++){
             double r = n*dx;
             A[n][i][i]  = fluid->mu()/(fluid->K()*dx*dx*dt) + fluid->mu()/(2*r*fluid->K()*dx*dt);
             
@@ -46,11 +205,11 @@ void Simulation::create_tridiag(Matrix* A, Matrix* B, Matrix* D){
 // Creates an array for the left hand side to be used for tridiagonal solving
 // Assumes that the array b exists and has already the correct dimensions
 void Simulation::create_lhs(Array* b){
-    for(int n=0; n<R_max; n++){
-        for(int i=0; i<Z_max; i++){
+    for(int n=0; n<Nx; n++){
+        for(int i=0; i<Nz; i++){
             double r = n*dx;
             // For the cells that are not in the boundaries
-            if ((n+1 < R_max && n-1 >= 0) && (i+1<Z_max && i-1>=0)){
+            if ((n+1 < Nx && n-1 >= 0) && (i+1<Nz && i-1>=0)){
                 b[n][i] = 
                 (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
                     P_curr[n][i+1] - 2*P_curr[n][i] + P_curr[n][i-1] + 
@@ -64,8 +223,8 @@ void Simulation::create_lhs(Array* b){
             // Now we are going to implement a box because it is easy
             // But it actually may be better to change this in the future
             // Specifically we are implementing fully absorbent boundary conditions
-            else if(n+1 >= R_max){
-                if (i+1 >= Z_max){
+            else if(n+1 >= Nx){
+                if (i+1 >= Nz){
 
                     b[n][i] = 
                     (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
@@ -91,7 +250,7 @@ void Simulation::create_lhs(Array* b){
             }
 
             else if(n-1 < 0){
-                if(i+1 >= Z_max){
+                if(i+1 >= Nz){
                     b[n][i] = 
                     (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
                         - 2*P_curr[n][i] + P_curr[n][i-1] + 
@@ -119,3 +278,34 @@ void Simulation::create_lhs(Array* b){
 
 /////////////////////////////////////////////////////
 // Mutators /////////////////////////////////////////
+
+// Getters
+double Simulation::get_dt(){ return dt;}
+double Simulation::get_dx(){ return dx;}
+double Simulation::get_dz(){ return dz;}
+
+int Simulation::get_Nx(){ return Nx;}
+int Simulation::get_Nz(){ return Nz;}
+
+double Simulation::get_R_max(){ return R_max;}
+double Simulation::get_Z_max(){ return Z_max;}
+
+Array* Simulation::get_P_prev(){ return P_prev;}
+Array* Simulation::get_P_curr(){ return P_curr;}
+Array* Simulation::get_P_next(){ return P_next;}
+
+Fluid* Simulation::get_fluid(){ return fluid;}
+
+
+// Setters
+void Simulation::set_dt(double dt){ this->dt = dt;}
+void Simulation::set_dx(double dx){ this->dx = dx;}
+void Simulation::set_dz(double dz){ this->dz = dz;}
+
+void Simulation::set_Nx(int Nx){ this->Nx = Nx;}
+void Simulation::set_Nz(int Nz){ this->Nz = Nz;}
+
+void Simulation::set_R_max(double R_max){ this->R_max = R_max;}
+void Simulation::set_Z_max(double Z_maz){ this->Z_max = Z_max;}
+
+void Simulation::set_fluid(Fluid* fluid){ this->fluid = fluid;}
