@@ -1,5 +1,0 @@
-rest_density:	1
-viscocity:	123.12
-compressibility:	-1
-coefficient_thermal_expansion:	32243.2
-specific_heat_pressure: -246.2
