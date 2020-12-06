@@ -56,12 +56,60 @@ void Simulation::create_lhs(Array* b){
                     P_curr[n][i+1] - 2*P_curr[n][i] + P_curr[n][i-1] + 
                     P_curr[n+1][i] - 2*P_curr[n][i] + P_curr[n-1][i]
                 ) + 1/(2*r*dx)* (P_curr[n+1][i] - P_curr[n-1][i]) +
-                fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - 
-                fluid->beta()/fluid->Cp() * E(r,i*dx));
+                fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - P_prev[n][i]) - 
+                fluid->beta()/fluid->Cp() * E(r,i*dx);
             }
 
+
+            // Now we are going to implement a box because it is easy
+            // But it actually may be better to change this in the future
+            // Specifically we are implementing fully absorbent boundary conditions
             else if(n+1 >= R_max){
-                
+                if (i+1 >= Z_max){
+
+                    b[n][i] = 
+                    (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
+                        - 2*P_curr[n][i] + P_curr[n][i-1] + 
+                        - 2*P_curr[n][i] + P_curr[n-1][i]
+                    ) + 1/(2*r*dx)* (- P_curr[n-1][i]) +
+                    fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - P_prev[n][i]) - 
+                    fluid->beta()/fluid->Cp() * E(r,i*dx);
+
+                }
+
+                else if (i-1<0){
+
+                    b[n][i] = 
+                    (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
+                        P_curr[n][i+1] - 2*P_curr[n][i] + 
+                        - 2*P_curr[n][i] + P_curr[n-1][i]
+                    ) + 1/(2*r*dx)* (- P_curr[n-1][i]) +
+                    fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - P_prev[n][i]) - 
+                    fluid->beta()/fluid->Cp() * E(r,i*dx);
+
+                }
+            }
+
+            else if(n-1 < 0){
+                if(i+1 >= Z_max){
+                    b[n][i] = 
+                    (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
+                        - 2*P_curr[n][i] + P_curr[n][i-1] + 
+                        P_curr[n+1][i] - 2*P_curr[n][i]
+                    ) + 1/(2*r*dx)* (P_curr[n+1][i]) +
+                    fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - P_prev[n][i]) - 
+                    fluid->beta()/fluid->Cp() * E(r,i*dx);
+                }
+
+                else if(i-1 < 0){
+                    b[n][i] = 
+                    (1 + fluid->mu()/(fluid->K() * dt))/(dx*dx)*(
+                        P_curr[n][i+1] - 2*P_curr[n][i] + 
+                        P_curr[n+1][i] - 2*P_curr[n][i]
+                    ) + 1/(2*r*dx)* (P_curr[n+1][i]) +
+                    fluid->r0()/(fluid->K()*dt*dt)* (2*P_curr[n][i] - P_prev[n][i]) - 
+                    fluid->beta()/fluid->Cp() * E(r,i*dx);
+                }
             }
         }
     }
