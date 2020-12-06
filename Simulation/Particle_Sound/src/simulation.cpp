@@ -124,6 +124,35 @@ Simulation::Simulation(double dt, double dx, int Nx, int Nz, Fluid* fluid, doubl
 /////////////////////////////////////////////////////
 // Class Functions //////////////////////////////////
 
+// The function that performs a single simulation step
+void Simulation::step(){
+    // First obrain lhs
+    create_lhs(lhs);
+
+    // Then get the next pressure vector
+    P_next = block_tridiag(A,Nx-1,B,Nx-1,D,Nx,lhs,Nx);
+
+    // Do whatever you want with the pressure Vectors
+
+
+    // Swap them (i.e. P_prev = P_curr, P_curr = P_next)
+    P_prev = P_curr;
+    P_curr = P_next;
+}
+
+// Runs the simulation for a specific number of iterations N
+void Simulation::run(int N){
+    for (int t=0; t<N; t++){
+        step();
+    }
+}
+
+// Runs the simulation for a specific amount of time in seconds
+void Simulation::run(double T){
+    int N = T/dt;
+    run(N);
+}
+
 // Set's up the simulatio, after this is called, the sim is ready to run
 // Called in constructor by default.
 void Simulation::setup(){
