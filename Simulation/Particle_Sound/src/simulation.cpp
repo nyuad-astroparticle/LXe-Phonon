@@ -1,4 +1,6 @@
 #include <simulation.h>
+#include <iostream>
+#include <ctime>
 
 /////////////////////////////////////////////////////
 // Simulation Class /////////////////////////////////
@@ -142,9 +144,16 @@ void Simulation::step(){
 
 // Runs the simulation for a specific number of iterations N
 void Simulation::run(int N){
+    time_t sim_start = time(NULL);
+
     for (int t=0; t<N; t++){
+        time_t start_time = time(NULL);
+        std::cout << "Step: " << t << " started  ...  ";
         step();
+        std::cout << "Completed after " << time(NULL) - start_time  << " seconds" << std::endl;
     }
+
+    std::cout << "Simulation completed after: " << time(NULL) - sim_start << " seconds" << std::endl; 
 }
 
 // Runs the simulation for a specific amount of time in seconds
@@ -161,15 +170,15 @@ void Simulation::setup(){
     // For the tridiagonal matrix
     // Center Diagonal
     D = new Matrix[Nx];
-    for (int n=0; n<Nx; n++) D[n] = Matrix(Nz,Nz);
+    for (int n=0; n<Nx; n++) D[n].init(Nz,Nz);
 
     // Upper Diagonal
     A = new Matrix[Nx-1];
-    for (int n=0; n<Nx-1; n++) A[n] = Matrix(Nz,Nz);
+    for (int n=0; n<Nx-1; n++) A[n].init(Nz,Nz);
 
     // Lower Diagonal
     B = new Matrix[Nx-1];
-    for (int n=0; n<Nx-1; n++) B[n] = Matrix(Nz,Nz);
+    for (int n=0; n<Nx-1; n++) B[n].init(Nz,Nz);
 
     // Now we initialize the left hand side array and the pressure arrays
     lhs = new Array[Nx];
@@ -178,10 +187,10 @@ void Simulation::setup(){
     P_next = new Array[Nx];
 
     for (int i=0; i < Nx; i++) {
-        lhs[i] = Array(Nz);
-        P_prev[i] = Array(Nz);
-        P_curr[i] = Array(Nz);
-        P_next[i] = Array(Nz);
+        lhs[i].init(Nz);
+        P_prev[i].init(Nz);
+        P_curr[i].init(Nz);
+        P_next[i].init(Nz);
     }
 }
 
@@ -338,3 +347,30 @@ void Simulation::set_R_max(double R_max){ this->R_max = R_max;}
 void Simulation::set_Z_max(double Z_maz){ this->Z_max = Z_max;}
 
 void Simulation::set_fluid(Fluid* fluid){ this->fluid = fluid;}
+
+
+
+/////////////////////////////////////////////////////
+// Printing Functions ///////////////////////////////
+
+// Prints everything into a stream object
+void Simulation::print(std::ostream& stream){
+    stream << "Particle Through Fluid Simulation object \n" << std::endl;
+    
+    stream << "\t dt:\t" << get_dt() << std::endl;
+    stream << "\t dx:\t" << get_dx() << std::endl;
+    stream << "\t dz:\t" << get_dz() << std::endl;
+
+    stream << "\t Nx:\t" << get_Nx() << std::endl;
+    stream << "\t Nz:\t" << get_Nz() << std::endl;
+    
+    stream << "\t R_max:\t" << get_R_max() << std::endl;
+    stream << "\t Z_max:\t" << get_Z_max() << std::endl;
+
+    stream << "\t fluid:\n" << std::endl;
+    get_fluid()->print(stream);
+}
+
+void Simulation::print(){
+    print(std::cout);
+}

@@ -13,14 +13,18 @@ Array::Array(){
 }
 
 Array::Array(int SIZE){
-    double* arr = new double[SIZE];
-    for (int i=0;i<SIZE;i++) arr[i] = 0;
-    this->ptr = arr;
-    this->SIZE = SIZE;
+    init(SIZE);
 }
 
 Array::Array(double* ptr,int SIZE){
     this->ptr = ptr;
+    this->SIZE = SIZE;
+}
+
+void Array::init(int SIZE){
+    double* arr = new double[SIZE];
+    for (int i=0;i<SIZE;i++) arr[i] = 0;
+    this->ptr = arr;
     this->SIZE = SIZE;
 }
 
@@ -150,6 +154,16 @@ Matrix::Matrix(){
 
 // Initializes a Matrix (ROW,COL) to zeroes
 Matrix::Matrix(int ROW_SIZE, int COL_SIZE){
+    init(ROW_SIZE,COL_SIZE);
+}
+
+Matrix::Matrix(double** ptr,int ROW_SIZE, int COL_SIZE){
+    this->ptr = ptr;
+    this->ROW_SIZE = ROW_SIZE;
+    this->COL_SIZE = COL_SIZE;
+}
+
+void Matrix::init(int ROW_SIZE, int COL_SIZE){
     double** mat = new double*[ROW_SIZE];
     for (int i=0;i<ROW_SIZE;i++){
         mat[i] = new double[COL_SIZE];
@@ -159,12 +173,6 @@ Matrix::Matrix(int ROW_SIZE, int COL_SIZE){
     }
 
     this->ptr = mat;
-    this->ROW_SIZE = ROW_SIZE;
-    this->COL_SIZE = COL_SIZE;
-}
-
-Matrix::Matrix(double** ptr,int ROW_SIZE, int COL_SIZE){
-    this->ptr = ptr;
     this->ROW_SIZE = ROW_SIZE;
     this->COL_SIZE = COL_SIZE;
 }
@@ -215,6 +223,10 @@ int Matrix::row_size(){
 // Returns the column size
 int Matrix::col_size(){
     return COL_SIZE;
+}
+
+double** Matrix::get_ptr(){
+    return ptr;
 }
 
 /////////////////////////////////////////////////////
@@ -720,10 +732,10 @@ Array block_tridiag(Matrix MAT,Array arr, int N, int M){
     Array* b = new Array[M];
 
     for (int i=0;i<M;i++){
-        A[i] = Matrix(N,N);
-        B[i] = Matrix(N,N);
-        D[i] = Matrix(N,N);
-        b[i] = Array(N);
+        A[i].init(N,N);
+        B[i].init(N,N);
+        D[i].init(N,N);
+        b[i].init(N);
     }
 
 

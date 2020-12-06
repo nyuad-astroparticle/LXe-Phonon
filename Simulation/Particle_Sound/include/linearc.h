@@ -19,6 +19,7 @@ class Array{
     Array();
     Array(int);
     Array(double*, int);
+    void init(int);
 
     // Overloading [] to allow for periodicity in indexing
     double& operator[](int);
@@ -62,6 +63,7 @@ class Matrix{
     Matrix();
     Matrix(int,int);
     Matrix(double**,int,int);
+    void init(int,int);
 
     // Overload some opeartors
     Matrix operator*(Matrix);
@@ -91,6 +93,7 @@ class Matrix{
     // Mutators
     int row_size();
     int col_size();
+    double** get_ptr();
 
     // Destructor
     ~Matrix();

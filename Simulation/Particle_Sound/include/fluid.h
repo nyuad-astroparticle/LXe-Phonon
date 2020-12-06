@@ -45,7 +45,7 @@ class Fluid{
 
     // Printing functions
     void print();
-    void print(std::ostream& stream);
+    void print(std::ostream&);
 };
 
 
