@@ -132,7 +132,7 @@ void Simulation::step(){
     create_lhs(lhs);
 
     // Then get the next pressure vector
-    P_next = block_tridiag(A,Nx-1,B,Nx-1,D,Nx,lhs,Nx);
+    block_tridiag(A,Nx-1,B,Nx-1,D,Nx,lhs,Nx, P_next);
 
     // Do whatever you want with the pressure Vectors
 

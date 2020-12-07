@@ -18,7 +18,7 @@ int main(){
     
     Fluid fluid("LXE.txt");
 
-    Simulation sim(0.1,0.1,(int)100,(int)100,&fluid,&Zero);
+    Simulation sim(0.1,0.1,(int)10000,(int)10,&fluid,&Zero);
 
     sim.run((int)10);
 
