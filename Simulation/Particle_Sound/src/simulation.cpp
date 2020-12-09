@@ -1,5 +1,6 @@
 #include <simulation.h>
 #include <iostream>
+#include <iomanip>
 #include <ctime>
 
 /////////////////////////////////////////////////////
@@ -129,7 +130,11 @@ Simulation::Simulation(double dt, double dx, int Nx, int Nz, Fluid* fluid, doubl
 // The function that performs a single simulation step
 void Simulation::step(){
     // First obrain lhs
+    // Timing
+    clock_t c_start = std::clock();
+    std::cout << "\n\t Creating LHS  ...  ";
     create_lhs(lhs);
+    std::cout << "\t Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms" << std::endl; 
 
     // Then get the next pressure vector
     block_tridiag(A,Nx-1,B,Nx-1,D,Nx,lhs,Nx, P_next);
@@ -144,16 +149,16 @@ void Simulation::step(){
 
 // Runs the simulation for a specific number of iterations N
 void Simulation::run(int N){
-    time_t sim_start = time(NULL);
+    clock_t sim_start = std::clock();
 
     for (int t=0; t<N; t++){
-        time_t start_time = time(NULL);
+        clock_t c_start = std::clock();
         std::cout << "Step: " << t << " started  ...  ";
         step();
-        std::cout << "Completed after " << time(NULL) - start_time  << " seconds" << std::endl;
+        std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms\n" << std::endl; 
     }
 
-    std::cout << "Simulation completed after: " << time(NULL) - sim_start << " seconds" << std::endl; 
+    std::cout << "Simulation completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - sim_start) / CLOCKS_PER_SEC << " ms" << std::endl; 
 }
 
 // Runs the simulation for a specific amount of time in seconds

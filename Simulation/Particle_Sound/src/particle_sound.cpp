@@ -1,5 +1,7 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <ctime>
 
 #include <linearc.h>
 #include <fluid.h>
@@ -18,7 +20,13 @@ int main(){
     
     Fluid fluid("LXE.txt");
 
-    Simulation sim(0.1,0.1,(int)10000,(int)10,&fluid,&Zero);
+    cout << "Started creating simulation object ... ";
+    clock_t c_start = clock();
+    
+    Simulation sim(0.1,0.1,(int)100,(int)100,&fluid,&Zero);
+    
+    clock_t c_end = clock();
+    cout << "Completed after: " << setprecision(2) << fixed << 1000. * (c_end-c_start) / CLOCKS_PER_SEC << " ms.\n" << endl;
 
     sim.run((int)10);
 

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <ctime>
 
 #include <linearc.h>
 
@@ -845,15 +847,32 @@ Array* block_tridiag(const Matrix* A, int A_SIZE, const Matrix* B,int B_SIZE, co
 // This is replacing the values in the output array x 
 void block_tridiag(const Matrix* A,int A_SIZE,const Matrix* B,int B_SIZE,const Matrix* D,int D_SIZE,const Array* b,int b_SIZE, Array* x){
 
+    clock_t c_start = std::clock();
+    std::cout << "\n\t\t Creating Gamma  ...  ";
     Matrix* Gamma = new Matrix[A_SIZE];
     for (int i=0; i<A_SIZE; i++) Gamma[i].init(A[0].row_size(),A[0].col_size());
+    std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms" << std::endl; 
 
+    c_start = std::clock();
+    std::cout << "\n\t\t Solving for the first entry  ...  ";
     // Decompose the original matrix
     Matrix lu(D[0].row_size(),D[0].col_size());
+
+    clock_t ct_start = std::clock();
+    std::cout << "\n\t\t\t lu_dcmp  ...  ";
     lu_dcmp(D[0],lu);
+    std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - ct_start) / CLOCKS_PER_SEC << " ms" << std::endl;
+
+    ct_start = std::clock();
+    std::cout << "\n\t\t\t solve  ...  ";
     solve(lu,A[0],Gamma[0],true);
     solve(lu,b[0],x[0],true);
+    std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - ct_start) / CLOCKS_PER_SEC << " ms" << std::endl;
 
+    std::cout << "\t\t Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms" << std::endl;
+
+    c_start = std::clock();
+    std::cout << "\n\t\t Forward Propagation  ...  ";
     // Forward propagation
     for(int i=1; i<D_SIZE; i++){    
         // get the decomposition of the divisor
@@ -865,11 +884,15 @@ void block_tridiag(const Matrix* A,int A_SIZE,const Matrix* B,int B_SIZE,const M
         Array arr = (b[i]-(B[i-1]*x[i-1]));
         solve(lu,arr,x[i]);
     }
+    std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms" << std::endl;
 
+    c_start = std::clock();
+    std::cout << "\n\t\t Backpropagation  ...  ";
     // Backpropagation
     for (int i=D_SIZE-2; i>=0; i--){
         x[i] = x[i] - Gamma[i] * x[i+1];
     }
+    std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - c_start) / CLOCKS_PER_SEC << " ms" << std::endl;
 }
 
 // Solves block tridiagonal system by passing the total matrix and the dimension size
