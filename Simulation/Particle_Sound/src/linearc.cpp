@@ -864,7 +864,7 @@ void block_tridiag(const Matrix* A,int A_SIZE,const Matrix* B,int B_SIZE,const M
     std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - ct_start) / CLOCKS_PER_SEC << " ms" << std::endl;
 
     ct_start = std::clock();
-    std::cout << "\n\t\t\t solve  ...  ";
+    std::cout << "\n\t\t\t solve  ...  "; // This is taking forever... FIX IT!
     solve(lu,A[0],Gamma[0],true);
     solve(lu,b[0],x[0],true);
     std::cout << "Completed after: " << std::fixed << std::setprecision(2) << 1000. * (std::clock() - ct_start) / CLOCKS_PER_SEC << " ms" << std::endl;
