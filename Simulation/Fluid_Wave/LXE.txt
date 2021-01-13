@@ -1,5 +1,5 @@
-rest_density:	2490
-viscocity:	1.272e-5
-compressibility:	0.179620035
-coefficient_thermal_expansion:	1
-specific_heat_pressure:	1
+rest_density(kg/m3):	2966.3
+viscocity(Pa*s):	5.1701e-4
+sound_speed(m/s):	653.47
+bulk_modulus(kg/s2m):	1.2667e+9
+specific_heat_p(J/kgK):	338.48
