@@ -5,3 +5,5 @@ This is used for finding the fundamental solution for the wavelike equation deri
 ```math
 SE = \frac{\sigma}{\sqrt{n}}
 ```
+
+$'\swrt{x^2}'$
