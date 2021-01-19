@@ -661,17 +661,56 @@ Matrix solve(const Matrix& A, const Matrix& b){
 void solve(const Matrix& A,const Matrix& b, Matrix& x, bool decomposed){
     
     // If the matrix is not in LU decompose it to LU
-    Matrix M(A.col_size(),A.row_size());
-    if (!decomposed)lu_dcmp(A,M);
-    else M = A;
+    if(!decomposed){
+        Matrix M(A.col_size(),A.row_size());
+        if (!decomposed)lu_dcmp(A,M);
+        else M = A;
 
-    //Solve the equivalent vector equtions
-    Array xx(M.col_size());
-    for (int i=0; i < b.col_size(); i++){
-        for (int j=0; j < xx.size(); j++) xx[j] = b[j][i];
-        Array tmp(xx.size());
-        solve(M,xx,tmp,true);
-        for (int j=0; j < xx.size(); j++)x[j][i] = tmp[j];
+        //Solve the equivalent vector equtions
+        Array xx(M.col_size());
+        for (int i=0; i < b.col_size(); i++){
+            for (int j=0; j < xx.size(); j++) xx[j] = b[j][i];
+            Array tmp(xx.size());
+            solve(M,xx,tmp,true);
+            for (int j=0; j < xx.size(); j++)x[j][i] = tmp[j];
+        }
+        return;
+    }
+
+    // if it is decpomposed already
+    else {
+        Matrix M(A.col_size(),A.row_size());
+        if (!decomposed)lu_dcmp(A,M);
+        else M = A;
+
+        //Solve the equivalent vector equations
+        Array xx(A.col_size());
+        for (int i=0; i < b.col_size(); i++){
+            for (int j=0; j < xx.size(); j++) xx[j] = b[j][i];
+            Array tmp(xx.size());
+            solve(A,xx,tmp,true);
+
+            // If the matrix is not in LU decompose it to LU
+            Matrix M(A.col_size(),A.row_size());
+            if (!decomposed)lu_dcmp(A,M);
+            else M = A;
+
+            // Forward Substitution
+            for(int i=0;i<x.size();i++){
+                double sum = 0;
+                for (int j=0;j<i-1;j++) sum+=M[i][j]*x[j];
+                x[i] = b[i] - sum;
+            }
+
+            //backward subsitution
+            for(int i=x.size()-1;i>=0;i--){
+                double sum = 0;
+                for (int j=i+1;j<x.size();j++) sum+=M[i][j]*x[j];
+                x[i] = (x[i]-sum)/M[i][i];
+            }
+            
+            for (int j=0; j < xx.size(); j++)x[j][i] = tmp[j];
+        }
     }
 }
 
