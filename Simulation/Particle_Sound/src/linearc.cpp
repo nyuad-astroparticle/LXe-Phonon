@@ -690,16 +690,13 @@ void solve(const Matrix& A,const Matrix& b, Matrix& x, bool decomposed){
             Array tmp(xx.size());
             solve(A,xx,tmp,true);
 
-            // If the matrix is not in LU decompose it to LU
-            Matrix M(A.col_size(),A.row_size());
-            if (!decomposed)lu_dcmp(A,M);
-            else M = A;
+
 
             // Forward Substitution
-            for(int i=0;i<x.size();i++){
+            for(int j=0;j<x.size();j++){
                 double sum = 0;
-                for (int j=0;j<i-1;j++) sum+=M[i][j]*x[j];
-                x[i] = b[i] - sum;
+                for (int k=0;k<j-1;k++) sum+=M[j][k]*x[k];
+                x[i] = b[j][i] - sum;
             }
 
             //backward subsitution
@@ -709,6 +706,9 @@ void solve(const Matrix& A,const Matrix& b, Matrix& x, bool decomposed){
                 x[i] = (x[i]-sum)/M[i][i];
             }
             
+
+
+
             for (int j=0; j < xx.size(); j++)x[j][i] = tmp[j];
         }
     }
