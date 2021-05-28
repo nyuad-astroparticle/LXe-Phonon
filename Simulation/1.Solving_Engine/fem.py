@@ -354,10 +354,13 @@ def plot_A(A,plot=True):
 def get_scheme_matrix(dt,T,S):
     '''Returns the scheme Matrix for a particular setup'''
     return T/dt + (1+dt)*S
+    # return T/dt
 
 def get_rhs(dt,S,T,U_curr,U_prev,F):
     '''Returns the vector for the left hand side of the equation'''
-    return np.matmul(S + (2/dt) * T,U_curr) + np.matmul(T,U_prev/dt) - dt*np.matmul(T,F)
+    return np.matmul(S + (2/dt) * T,U_curr) - np.matmul(T,U_prev/dt) - dt*np.matmul(T,F)
+    # return np.matmul(-S*(1+dt) + (2/dt) * T,U_curr) + np.matmul(S-T/dt,U_prev) - dt*np.matmul(T,F)
+
 
 def get_F(f,t,points):
     '''Returns the vector F'''
@@ -382,7 +385,7 @@ def run(t,dt,A,S,T,U_curr,U_prev,f,points):
     N = int(t//dt)
 
     # Display a progress bar for fun
-    for i in tqdm(range(N)):
+    for i in range(N):
         F = get_F(f,i*dt,points)
         U_curr, U_prev = step(dt,A,S,T,U_curr,U_prev,F)
 
@@ -400,6 +403,7 @@ def plot_U(points,mesh,U):
 
     # Plot the grid and the wave on top of it.
     ax.triplot(points[:,0], points[:,1], mesh.simplices,lw=0.1,c='grey')
-    cf = ax.tricontourf(points[:,0], points[:,1], mesh.simplices,U)
+    clev = np.linspace(U.min(),U.max(),49)
+    cf = ax.tricontourf(points[:,0], points[:,1], mesh.simplices,U,levels=clev,cmap=cm.coolwarm)
 
     fig.colorbar(cf)

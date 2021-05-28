@@ -1,0 +1,131 @@
+# Import the necessary libraries
+from fem import *
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import sys
+import time
+
+
+# Control variables
+# These are the variables that control our simulation.
+bounds  = [(0,1),(0,1)]             # Domain bounds
+h       = 1e-2                      # Mesh Fineness parameter
+FF      = lambda r,z: abs(1.3*r)    # Discretisation function
+dt      = 1e-2                      # Simulation time step  
+
+# Define a Source function
+# f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a -(t-t0)**2/b)
+# f       = lambda r,z,t: f(r,z,t)* ( (2*v/a*(z-t*v) -2/b *(t-t0))**2 - (2/b+2*v*2/a))
+f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a)
+f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
+v       = 5e-3                  # Source wave speed
+a       = 1e-2                  # Source std
+b       = 2e-1                  # Source offset
+
+# Now we will get the mesh and points
+points,mesh = get_mesh(h,FF,bounds)
+boundary    = get_boundary(points)
+
+# Buld T, S matrices
+T,S = get_TS(points,mesh)
+
+# Construct the scheme matrix and apply boundary conditions
+Ap= get_scheme_matrix(dt,T,S)
+A = set_bc_lhs(boundary,Ap,points,mesh)
+
+# Define the initial condition vectors
+# Goal is to solve for U_next, using U_curr and U_prev
+ff = lambda r,z: np.exp(-((z-0.5)**2 + (r)**2)/s)
+# U_curr = np.array([ff(*p) for p in points])
+# U_prev = np.array([0.1*ff(*p) for p in points])
+U_curr = np.zeros(len(points))
+U_prev = np.zeros(len(points))
+F      = np.array([f(*point,0) for point in points])
+
+
+# Let's create an animation
+# Create the figure
+fig = plt.figure(figsize=(6,5),dpi=200)
+ax  = fig.add_subplot(111)
+ax.set_aspect('equal')
+ax.set_title(r'Wave in $\phi$-slice t=0')
+ax.set_xlabel(r'$\rho$')
+ax.set_ylabel(r'$z$')
+
+# Plot the grid and the wave on top of it.
+ax.triplot(points[:,0], points[:,1], mesh.simplices,lw=0.1,c='grey')
+# clev = np.linspace(U_curr.min(),U_curr.max(),49)
+cf = ax.tricontourf(points[:,0], points[:,1], mesh.simplices,U_curr,cmap=cm.coolwarm)
+cb = fig.colorbar(cf)
+
+barWidth = 40
+
+
+class ProgressBar():
+    '''
+    Provides a simple progress bar class
+    '''
+    def __init__(self, nsteps, width=barWidth):
+        self._start = self._stop = time.time()
+        self._nsteps = nsteps
+        self._width = width
+        self._status = ""
+
+    def update(self, step):
+        '''
+        This function produces and updates a progress bar.
+        It was stolen and modified from
+        http://stackoverflow.com/a/15860757/1552338
+        '''
+        self._start = self._stop
+        self._stop = time.time()
+        self._status = self._stop - self._start
+
+        progress = float(step)/float(self._nsteps - 1)
+        if progress >= 1:
+            progress = 1
+            self._status = "Complete...\r\n"
+        block = int(round(self._width * progress))
+        text = "\rProcessing: [{}] {:.1%} {:.3}".format("#" * block+ "-" * (self._width- block),progress,self._status)
+        sys.stdout.write(text)
+        sys.stdout.flush()
+
+N_steps = 2000
+
+progress1 = ProgressBar(N_steps)  # initialize the progress bar
+progress2 = ProgressBar(N_steps)  # initialize the progress bar
+
+def animate(i):
+    global U_prev,U_curr,F,cf,ax,cb
+
+    F = get_F(f,i*dt,points)
+    # Calculate the left hand side
+    B = get_rhs(dt,S,T,U_curr,U_prev,F)
+
+    # move one step
+    U_prev = U_curr.copy()
+    U_curr = spsolve(A,B)
+
+    # Update the plot
+    for c in cf.collections:
+        c.remove()
+    
+    mid = 0 #(U_curr.min() + U_curr.max())/2
+    m = mid - max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
+    M = mid + max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
+    clev = np.linspace(m,M,49)
+    cf = ax.tricontourf(points[:,0], points[:,1], mesh.simplices,U_curr,levels=clev,cmap=cm.coolwarm)
+    cb.remove()
+    cb = fig.colorbar(cf)
+
+    ax.set_title(r'Wave in $\phi$-slice t=%.2e'%(i*dt))
+
+    progress1.update(i)
+
+    return cf
+
+# print("Started Animation Making")
+anim = animation.FuncAnimation(fig, animate, frames=range(N_steps), repeat=False)
+# print("Started Rendering")
+anim.save('animation4.mp4', fps=24, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
