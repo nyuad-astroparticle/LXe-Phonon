@@ -36,9 +36,6 @@ A = set_bc_lhs(boundary,Ap,points,mesh)
 
 # Define the initial condition vectors
 # Goal is to solve for U_next, using U_curr and U_prev
-ff = lambda r,z: np.exp(-((z-0.5)**2 + (r)**2)/s)
-# U_curr = np.array([ff(*p) for p in points])
-# U_prev = np.array([0.1*ff(*p) for p in points])
 U_curr = np.zeros(len(points))
 U_prev = np.zeros(len(points))
 F      = np.array([f(*point,0) for point in points])
