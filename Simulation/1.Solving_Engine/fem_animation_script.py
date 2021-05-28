@@ -19,7 +19,7 @@ dt      = 1e-2                      # Simulation time step
 # f       = lambda r,z,t: f(r,z,t)* ( (2*v/a*(z-t*v) -2/b *(t-t0))**2 - (2/b+2*v*2/a))
 f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a)
 f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
-v       = 5e-3                  # Source wave speed
+v       = 1e-0                  # Source wave speed
 a       = 1e-2                  # Source std
 b       = 2e-1                  # Source offset
 
@@ -88,7 +88,7 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 2000
+N_steps = 10
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
@@ -126,3 +126,7 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, frames=range(N_steps), repeat=False)
 # print("Started Rendering")
 anim.save('animation4.mp4', fps=24, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
+
+# import matplotlib as mpl 
+# mpl.rcParams['animation.ffmpeg_path'] = '/home/po524/Desktop/ffmpeg-4.3.2/ffmpeg'
+# anim.save('animation4.mp4',writer=animation.FFMpegWriter(fps=2) ,progress_callback=lambda i, n: progress2.update(i))

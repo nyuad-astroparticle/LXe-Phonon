@@ -284,7 +284,7 @@ def set_bc_rhs(boundary,B):
 
     # I know this can look prettier... it's 3:00 right now
     B[bd_lower] = 0
-    B[bd_upper] = 0
+    # B[bd_upper] = 0
     B[bd_right] = 0
     B[bd_left]  = 0
 
@@ -309,9 +309,9 @@ def set_bc_lhs(boundary,A,points,mesh):
         A[p][p] = 1
 
     # Upper
-    for p in bd_upper:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # for p in bd_upper:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
     # Right
     for p in bd_right:
