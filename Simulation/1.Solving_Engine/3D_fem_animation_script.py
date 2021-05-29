@@ -68,7 +68,7 @@ U = interp(RR)
 
 Ff = lambda x,y: interp((x**2+y**2)**0.5)
 R = np.linspace(bounds[0][0],bounds[0][1],Npts)
-theta = np.linspace(0,2*np.pi,30)
+theta = np.linspace(0,3/2*np.pi,30)
 
 R,theta = np.meshgrid(R,theta)
 
@@ -112,7 +112,7 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 2000
+N_steps = 8000
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
