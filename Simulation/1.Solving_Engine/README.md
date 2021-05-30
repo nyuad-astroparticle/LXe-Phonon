@@ -53,4 +53,13 @@ With some simple processing, as illustrated [**here**](https://github.com/PanosE
 
 ![Wave in Z Slice](Figures/fast_particle_slice_3D.png)
 
+Using the animation scripts one can also produce videos of these cuts like so!
+
+https://user-images.githubusercontent.com/31447975/120099712-16db1b00-c14e-11eb-9cd0-580b11210e1a.mp4
+
+And like so
+
+https://user-images.githubusercontent.com/31447975/120099746-425e0580-c14e-11eb-8759-119c23c46523.mp4
+
+
 More elaborate measurements are coming... : )
