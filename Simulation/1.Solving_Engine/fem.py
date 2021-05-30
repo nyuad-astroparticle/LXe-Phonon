@@ -285,8 +285,8 @@ def set_bc_rhs(boundary,B):
     # I know this can look prettier... it's 3:00 right now
     B[bd_lower] = 0
     # B[bd_upper] = 0
-    B[bd_right] = 0
-    B[bd_left]  = 0
+    # B[bd_right] = 0
+    # B[bd_left]  = 0
 
 def set_bc_lhs(boundary,A,points,mesh):
     '''Sets the boundary conditions on the right hand side'''
@@ -314,18 +314,18 @@ def set_bc_lhs(boundary,A,points,mesh):
     #     A[p][p] = 1
 
     # Right
-    for p in bd_right:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # for p in bd_right:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
     # Neumann
     # Left
-    for p in bd_left:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # for p in bd_left:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
-        nei_pts = [ pt for pt in np.unique(mesh.simplices[get_simplices(mesh,p)].reshape(-1)) if points[p][0]!= 0]
-        for i in nei_pts:A[p][i] = -1/len(nei_pts)
+    #     nei_pts = [ pt for pt in np.unique(mesh.simplices[get_simplices(mesh,p)].reshape(-1)) if points[p][0]!= 0]
+    #     for i in nei_pts:A[p][i] = -1/len(nei_pts)
 
     # Convert the matrix in linear form and try again
     return csc_matrix(A,dtype=float)
