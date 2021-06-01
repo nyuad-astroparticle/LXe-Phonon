@@ -59,7 +59,7 @@ ax.w_xaxis.set_pane_color ((0., 0., 0., 0.))
 ax.w_yaxis.set_pane_color ((0., 0., 0., 0.))
 ax.w_zaxis.set_pane_color ((0., 0., 0., 0.))
 
-ax.set_zlim(0,0.04)
+ax.set_zlim(0,0.1)
 
 # Get the Pressure for one axis
 U = np.array([np.mean(U_curr[mesh.simplices[mesh.find_simplex([r,z]) ]]) for r in RR])
@@ -112,7 +112,7 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 8000
+N_steps = 10000
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
@@ -160,5 +160,5 @@ def animate(i):
 # print("Started Animation Making")
 anim = animation.FuncAnimation(fig, animate, frames=range(N_steps), repeat=False)
 # print("Started Rendering")
-anim.save('3D_animation.mp4', fps=24, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
+anim.save('3D_animation.mp4', fps=60, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
 print('\n')

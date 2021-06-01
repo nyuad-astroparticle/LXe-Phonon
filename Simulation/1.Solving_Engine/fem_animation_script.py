@@ -88,7 +88,7 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 10
+N_steps = 2000
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
