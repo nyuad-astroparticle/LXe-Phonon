@@ -17,13 +17,12 @@ FF      = lambda r,z: abs(1.3*r)    # Discretisation function
 dt      = 1e-2                      # Simulation time step  
 
 # Define a Source function
-# f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a -(t-t0)**2/b)
-# f       = lambda r,z,t: f(r,z,t)* ( (2*v/a*(z-t*v) -2/b *(t-t0))**2 - (2/b+2*v*2/a))
-f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a)
-f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
+f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/(2*a**2)) # Gaussian
+# f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
+f       = lambda r,z,t: v**2 * (z+10*a-v*t)/((2*np.pi)**(3/2) * a**5) * f0(r,z+10*a,t)
+
 v       = 1e-0                  # Source wave speed
-a       = 1e-2                  # Source std
-b       = 2e-1                  # Source offset
+a       = 2e-2                  # Source std
 
 # Now we will get the mesh and points
 points,mesh = get_mesh(h,FF,bounds)
@@ -59,7 +58,7 @@ ax.w_xaxis.set_pane_color ((0., 0., 0., 0.))
 ax.w_yaxis.set_pane_color ((0., 0., 0., 0.))
 ax.w_zaxis.set_pane_color ((0., 0., 0., 0.))
 
-ax.set_zlim(0,0.1)
+ax.set_zlim(-100,100)
 
 # Get the Pressure for one axis
 U = np.array([np.mean(U_curr[mesh.simplices[mesh.find_simplex([r,z]) ]]) for r in RR])
@@ -112,8 +111,8 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 20000
-draw_every = 10
+N_steps = 5000
+draw_every = 2
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
@@ -135,11 +134,11 @@ def animate(i):
     surf.remove()
     # cb.remove()
     
-    # Get the new colormap levels
-    mid = 0 #(U_curr.min() + U_curr.max())/2
-    m = mid - max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
-    M = mid + max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
-    clev = np.linspace(m,M,49)
+    # # Get the new colormap levels
+    # mid = 0 #(U_curr.min() + U_curr.max())/2
+    # m = mid - max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
+    # M = mid + max(abs(U_curr.min() - mid),abs(U_curr.max() - mid)) 
+    # clev = np.linspace(m,M,49)
 
     # Get the values along the z-plane
     U = np.array([np.mean(U_curr[mesh.simplices[mesh.find_simplex([r,z]) ]]) for r in RR])
