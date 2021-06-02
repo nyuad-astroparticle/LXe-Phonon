@@ -15,13 +15,12 @@ FF      = lambda r,z: abs(1.3*r)    # Discretisation function
 dt      = 1e-2                      # Simulation time step  
 
 # Define a Source function
-# f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a -(t-t0)**2/b)
-# f       = lambda r,z,t: f(r,z,t)* ( (2*v/a*(z-t*v) -2/b *(t-t0))**2 - (2/b+2*v*2/a))
-f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/a)
-f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
+f0      = lambda r,z,t: np.exp(-((z-v*t)**2 + r**2)/(2*a**2)) # Gaussian
+# f       = lambda r,z,t: a*f0(r,z,t)* ( (2*v/a*(z-t*v))**2 - (2*v*2/a))/10 * (1/(1+np.exp(-20*(t-0.2))))
+f       = lambda r,z,t: v**2 * (z+10*a-v*t)/((2*np.pi)**(3/2) * a**5) * f0(r,z+10*a,t)
+
 v       = 1e-0                  # Source wave speed
-a       = 1e-2                  # Source std
-b       = 2e-1                  # Source offset
+a       = 2e-2                  # Source std
 
 # Now we will get the mesh and points
 points,mesh = get_mesh(h,FF,bounds)
@@ -39,6 +38,8 @@ A = set_bc_lhs(boundary,Ap,points,mesh)
 U_curr = np.zeros(len(points))
 U_prev = np.zeros(len(points))
 F      = np.array([f(*point,0) for point in points])
+U_curr = F.copy()
+U_prev = np.array([f(*point,-dt) for point in points])
 
 
 # Let's create an animation
@@ -89,6 +90,7 @@ class ProgressBar():
         sys.stdout.flush()
 
 N_steps = 2000
+draw_every = 2
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
@@ -96,13 +98,14 @@ progress2 = ProgressBar(N_steps)  # initialize the progress bar
 def animate(i):
     global U_prev,U_curr,F,cf,ax,cb
 
-    F = get_F(f,i*dt,points)
-    # Calculate the left hand side
-    B = get_rhs(dt,S,T,U_curr,U_prev,F)
+    for j in range(i*draw_every,(i+1)*draw_every):
+        F = get_F(f,j*dt,points)
+        # Calculate the left hand side
+        B = get_rhs(dt,S,T,U_curr,U_prev,F)
 
-    # move one step
-    U_prev = U_curr.copy()
-    U_curr = spsolve(A,B)
+        # move one step
+        U_prev = U_curr.copy()
+        U_curr = spsolve(A,B)
 
     # Update the plot
     for c in cf.collections:
@@ -125,7 +128,7 @@ def animate(i):
 # print("Started Animation Making")
 anim = animation.FuncAnimation(fig, animate, frames=range(N_steps), repeat=False)
 # print("Started Rendering")
-anim.save('animation4.mp4', fps=24, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
+anim.save('animation4.mp4', fps=60, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
 
 # import matplotlib as mpl 
 # mpl.rcParams['animation.ffmpeg_path'] = '/home/po524/Desktop/ffmpeg-4.3.2/ffmpeg'
