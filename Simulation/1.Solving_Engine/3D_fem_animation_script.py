@@ -112,7 +112,8 @@ class ProgressBar():
         sys.stdout.write(text)
         sys.stdout.flush()
 
-N_steps = 10000
+N_steps = 20000
+draw_every = 10
 
 progress1 = ProgressBar(N_steps)  # initialize the progress bar
 progress2 = ProgressBar(N_steps)  # initialize the progress bar
@@ -120,13 +121,14 @@ progress2 = ProgressBar(N_steps)  # initialize the progress bar
 def animate(i):
     global U_prev,U_curr,F,surf,ax
 
-    F = get_F(f,i*dt,points)
-    # Calculate the left hand side
-    B = get_rhs(dt,S,T,U_curr,U_prev,F)
+    for j in range(i*draw_every,(i+1)*draw_every):
+        F = get_F(f,j*dt,points)
+        # Calculate the left hand side
+        B = get_rhs(dt,S,T,U_curr,U_prev,F)
 
-    # move one step
-    U_prev = U_curr.copy()
-    U_curr = spsolve(A,B)
+        # move one step
+        U_prev = U_curr.copy()
+        U_curr = spsolve(A,B)
 
     # Update the plot
     # Remove elements
@@ -149,6 +151,7 @@ def animate(i):
 
     # Plot the 3D version
     surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,cmap=cm.coolwarm,norm=colors.CenteredNorm(), edgecolor='none')
+    # surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,cmap=cm.coolwarm, edgecolor='none')
     # cb = fig.colorbar(surf)
 
     ax.set_title(r'Wave in $\phi$-slice t=%.2e'%(i*dt))
@@ -160,5 +163,5 @@ def animate(i):
 # print("Started Animation Making")
 anim = animation.FuncAnimation(fig, animate, frames=range(N_steps), repeat=False)
 # print("Started Rendering")
-anim.save('3D_animation.mp4', fps=60, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
+anim.save('3D_animation.mp4', fps=20, extra_args=['-vcodec', 'libx264'],progress_callback=lambda i, n: progress2.update(i))
 print('\n')
