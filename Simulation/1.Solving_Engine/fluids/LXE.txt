@@ -3,4 +3,7 @@ viscocity(Pa*s):	1.70e-2
 sound_speed(m/s):	653.47
 bulk_modulus(kg/s2m):	1.2667e+9
 specific_heat_p(J/kgK):	338.48
-thermal_expansion(1/K):	1.3952e-3
+thermal_expansion(/K): 0.0013952
+ionization_potential(J):    2.243e-18
+molar_mass(u):  131.293
+atomic_number():   54
