@@ -20,6 +20,20 @@ from scipy.linalg import solve
 from scipy.spatial import Delaunay
 
 #########################################################################
+## Helper Functions
+#########################################################################
+
+# Get a property file and return a dictionary with the info
+def get_properties(fname):
+    labels  = np.loadtxt(fname,usecols=0,dtype=str,delimiter='(')
+    units   = np.loadtxt(fname,usecols=0,dtype=str,delimiter=':')
+    values  = np.loadtxt(fname,usecols=1)
+
+    return dict(zip(labels,values))         # Create a dictionary with the properties of the liquid
+
+
+
+#########################################################################
 ## Space Discretisation
 #########################################################################
 
@@ -351,14 +365,14 @@ def plot_A(A,plot=True):
 ## Numerical Scheme and Simulation Commands
 #########################################################################
 
-def get_scheme_matrix(dt,T,S):
+def get_scheme_matrix(dt,T,S,tau=1,lam=1):
     '''Returns the scheme Matrix for a particular setup'''
-    return T/dt + (1+dt)*S
+    return T*lam**2/dt + (1/tau+dt)*S
     # return T/dt
 
-def get_rhs(dt,S,T,U_curr,U_prev,F):
+def get_rhs(dt,S,T,U_curr,U_prev,F,tau=1,lam=1):
     '''Returns the vector for the left hand side of the equation'''
-    return np.matmul(S + (2/dt) * T,U_curr) - np.matmul(T,U_prev/dt) - dt*np.matmul(T,F)
+    return np.matmul(S/tau + (2*lam**2/dt) * T,U_curr) - np.matmul(T,U_prev/dt*lam**2) - dt*lam**2*np.matmul(T,F)
     # return np.matmul(-S*(1+dt) + (2/dt) * T,U_curr) + np.matmul(S-T/dt,U_prev) - dt*np.matmul(T,F)
 
 
@@ -366,11 +380,11 @@ def get_F(f,t,points):
     '''Returns the vector F'''
     return np.array([f(*point,t) for point in points])
 
-def step(dt,A,S,T,U_curr,U_prev,F):
+def step(dt,A,S,T,U_curr,U_prev,F,tau=1,lam=1):
     '''Performs one simulation step'''
     
     # Calculate the left hand side
-    B = get_rhs(dt,S,T,U_curr,U_prev,F)
+    B = get_rhs(dt,S,T,U_curr,U_prev,F,tau=tau,lam=lam)
 
     # move one step
     U_prev = U_curr.copy()
@@ -378,7 +392,7 @@ def step(dt,A,S,T,U_curr,U_prev,F):
 
     return U_curr,U_prev
 
-def run(t,dt,A,S,T,U_curr,U_prev,f,points):
+def run(t,dt,A,S,T,U_curr,U_prev,f,points,tau=1,lam=1):
     '''Run the simulation continiously for time t'''
 
     # Get the number of iterations
@@ -387,7 +401,7 @@ def run(t,dt,A,S,T,U_curr,U_prev,f,points):
     # Display a progress bar for fun
     for i in range(N):
         F = get_F(f,i*dt,points)
-        U_curr, U_prev = step(dt,A,S,T,U_curr,U_prev,F)
+        U_curr, U_prev = step(dt,A,S,T,U_curr,U_prev,F,tau=tau,lam=lam)
 
     return U_curr
 
