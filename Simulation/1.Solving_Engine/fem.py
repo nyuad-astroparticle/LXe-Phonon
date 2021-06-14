@@ -139,6 +139,26 @@ def get_mesh(h=5e-2, F = lambda r,z: abs(r),bounds=[(0,1),(0,1)],):
     # We return the mesh and the points
     return points,mesh
 
+# Generate arectangular grid of points, jsut in case we want a quick and dirty solution
+def get_mesh_grid(h=5e-2,bounds=[(0,1),(0,1)]):
+    # Create axes
+    r = np.arange(bounds[0][0],bounds[0][1]+h,h)
+    z = np.arange(bounds[1][0],bounds[1][1]+h,h)
+
+    # Generate a list of points
+    points = np.array(np.meshgrid(r,z)).T
+    points = points.reshape(points.shape[0]**2,2)
+
+    # This step is important to get prettier sparse matrices
+    points = reorder(points)
+
+    # Generate the mesh
+    mesh = Delaunay(points)
+
+    # We return the mesh and the points
+    return points,mesh
+
+
 # One more function, to print the mesh in a pretty way
 def plot_mesh(points,mesh,F,bounds=[(0,1),(0,1)],plot=False):
     
