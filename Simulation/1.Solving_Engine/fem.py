@@ -158,6 +158,38 @@ def get_mesh_grid(h=5e-2,bounds=[(0,1),(0,1)]):
     # We return the mesh and the points
     return points,mesh
 
+# Generate a mesh using a random scoring function
+def get_mesh_random(h_min=2e-2, F = lambda r,z: np.exp(-(r**2)/0.5**2), bounds=[(0,1),(0,1)]):
+
+    # Now we will genrate a set of points with this separation
+    R = np.arange(bounds[0][0],bounds[0][1]+h_min,h_min)
+    Z = np.arange(bounds[1][0],bounds[1][1]+h_min,h_min)
+    points = merge(R,Z)
+
+    # Now filter the mesh
+    i=0
+    while i < len(points):
+        if np.random.rand() >= F(*points[i]):
+            points.remove(points[i])
+            i-=1
+        i+=1
+
+    # Add the 4 bounday points bback to the mesh
+    for p in merge(*bounds):
+        if p not in points:
+            points.append(p)
+
+    points = np.array(points)
+
+    # This step is important to get prettier sparse matrices
+    points = reorder(points)
+
+    # We can generate a mesh using Delaunay Triangulization
+    mesh = Delaunay(points)
+
+    # We return the mesh and the points
+    return points,mesh
+
 
 # One more function, to print the mesh in a pretty way
 def plot_mesh(points,mesh,F,bounds=[(0,1),(0,1)],plot=False):
@@ -277,14 +309,17 @@ def plot_TS(S,T,plot='True'):
 ## Handle Boundary Conditions
 #########################################################################
 
-def get_boundary(points):
+def get_boundary(points,bounds = [(0,2),(0,1)]):
     '''Returns a list of boundary point indexes'''
 
     pts = points.tolist()
-    bd_lower = np.arange(0,pts.index([1,0]))
-    bd_upper = np.arange(pts.index([0,1]),len(pts))
-    bd_left  = [pts.index(p) for p in pts if p[0]==0]
-    bd_right = [pts.index(p) for p in pts if p[0]==1]
+    bd_points = merge(*bounds)
+    # bd_lower = np.arange(0,pts.index(bd_points[2]))
+    # bd_upper = np.arange(pts.index(bd_points[1]),len(pts))
+    bd_lower = [pts.index(p) for p in pts if p[1]==bounds[1][0]]
+    bd_upper = [pts.index(p) for p in pts if p[1]==bounds[1][1]]
+    bd_left  = [pts.index(p) for p in pts if p[0]==bounds[0][0]]
+    bd_right = [pts.index(p) for p in pts if p[0]==bounds[0][1]]
 
     return bd_lower,bd_upper,bd_left,bd_right
 
@@ -318,8 +353,8 @@ def set_bc_rhs(boundary,B):
 
     # I know this can look prettier... it's 3:00 right now
     B[bd_lower] = 0
-    # B[bd_upper] = 0
-    # B[bd_right] = 0
+    B[bd_upper] = 0
+    B[bd_right] = 0
     # B[bd_left]  = 0
 
 def set_bc_lhs(boundary,A,points,mesh):
@@ -343,14 +378,14 @@ def set_bc_lhs(boundary,A,points,mesh):
         A[p][p] = 1
 
     # Upper
-    # for p in bd_upper:
-    #     for i in range(len(pts)): A[p][i] = 0
-    #     A[p][p] = 1
+    for p in bd_upper:
+        for i in range(len(pts)): A[p][i] = 0
+        A[p][p] = 1
 
     # Right
-    # for p in bd_right:
-    #     for i in range(len(pts)): A[p][i] = 0
-    #     A[p][p] = 1
+    for p in bd_right:
+        for i in range(len(pts)): A[p][i] = 0
+        A[p][p] = 1
 
     # Neumann
     # Left
