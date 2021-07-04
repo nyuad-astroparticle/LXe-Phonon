@@ -352,7 +352,7 @@ def set_bc_rhs(boundary,B):
     bd_lower,bd_upper,bd_left,bd_right = boundary
 
     # I know this can look prettier... it's 3:00 right now
-    # B[bd_lower] = 0
+    B[bd_lower] = 0
     # B[bd_upper] = 0
     # B[bd_right] = 0
     # B[bd_left]  = 0
@@ -371,11 +371,11 @@ def set_bc_lhs(boundary,A,points,mesh):
     # Get the point indices
     pts = points.tolist()
 
-    # Dirichlet
-    # Lower
-    for p in bd_lower:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # # Dirichlet
+    # # Lower
+    # for p in bd_lower:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
     # # Upper
     # for p in bd_upper:
