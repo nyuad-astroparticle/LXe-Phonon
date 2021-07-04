@@ -352,9 +352,9 @@ def set_bc_rhs(boundary,B):
     bd_lower,bd_upper,bd_left,bd_right = boundary
 
     # I know this can look prettier... it's 3:00 right now
-    B[bd_lower] = 0
-    B[bd_upper] = 0
-    B[bd_right] = 0
+    # B[bd_lower] = 0
+    # B[bd_upper] = 0
+    # B[bd_right] = 0
     # B[bd_left]  = 0
 
 def set_bc_lhs(boundary,A,points,mesh):
@@ -377,18 +377,18 @@ def set_bc_lhs(boundary,A,points,mesh):
         for i in range(len(pts)): A[p][i] = 0
         A[p][p] = 1
 
-    # Upper
-    for p in bd_upper:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # # Upper
+    # for p in bd_upper:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
-    # Right
-    for p in bd_right:
-        for i in range(len(pts)): A[p][i] = 0
-        A[p][p] = 1
+    # # Right
+    # for p in bd_right:
+    #     for i in range(len(pts)): A[p][i] = 0
+    #     A[p][p] = 1
 
-    # Neumann
-    # Left
+    # # Neumann
+    # # Left
     # for p in bd_left:
     #     for i in range(len(pts)): A[p][i] = 0
     #     A[p][p] = 1
@@ -435,11 +435,12 @@ def get_F(f,t,points):
     '''Returns the vector F'''
     return np.array([f(*point,t) for point in points])
 
-def step(dt,A,S,T,U_curr,U_prev,F,tau=1,lam=1):
+def step(dt,A,S,T,U_curr,U_prev,F,tau=1,lam=1,boundary=None):
     '''Performs one simulation step'''
     
     # Calculate the left hand side
     B = get_rhs(dt,S,T,U_curr,U_prev,F,tau=tau,lam=lam)
+    if (type(boundary)!=type(None)): set_bc_rhs(boundary,B)
 
     # move one step
     U_prev = U_curr.copy()
@@ -447,7 +448,7 @@ def step(dt,A,S,T,U_curr,U_prev,F,tau=1,lam=1):
 
     return U_curr,U_prev
 
-def run(t,dt,A,S,T,U_curr,U_prev,f,points,tau=1,lam=1):
+def run(t,dt,A,S,T,U_curr,U_prev,f,points,tau=1,lam=1,boundary=None):
     '''Run the simulation continiously for time t'''
 
     # Get the number of iterations
