@@ -353,8 +353,8 @@ def set_bc_rhs(boundary,B):
 
     # I know this can look prettier... it's 3:00 right now
     B[bd_lower] = 0
-    # B[bd_upper] = 0
-    # B[bd_right] = 0
+    B[bd_upper] = 0
+    B[bd_right] = 0
     # B[bd_left]  = 0
 
 def set_bc_lhs(boundary,A,points,mesh):
@@ -371,21 +371,21 @@ def set_bc_lhs(boundary,A,points,mesh):
     # Get the point indices
     pts = points.tolist()
 
-    # # Dirichlet
-    # # Lower
-    # for p in bd_lower:
-    #     for i in range(len(pts)): A[p][i] = 0
-    #     A[p][p] = 1
+    # Dirichlet
+    # Lower
+    for p in bd_lower:
+        for i in range(len(pts)): A[p][i] = 0
+        A[p][p] = 1
 
-    # # Upper
-    # for p in bd_upper:
-    #     for i in range(len(pts)): A[p][i] = 0
-    #     A[p][p] = 1
+    # Upper
+    for p in bd_upper:
+        for i in range(len(pts)): A[p][i] = 0
+        A[p][p] = 1
 
-    # # Right
-    # for p in bd_right:
-    #     for i in range(len(pts)): A[p][i] = 0
-    #     A[p][p] = 1
+    # Right
+    for p in bd_right:
+        for i in range(len(pts)): A[p][i] = 0
+        A[p][p] = 1
 
     # # Neumann
     # # Left
@@ -397,6 +397,7 @@ def set_bc_lhs(boundary,A,points,mesh):
     #     for i in nei_pts:A[p][i] = -1/len(nei_pts)
 
     # Convert the matrix in linear form and try again
+    
     return csc_matrix(A,dtype=float)
 
 def plot_A(A,plot=True):
@@ -422,12 +423,23 @@ def plot_A(A,plot=True):
 
 def get_scheme_matrix(dt,T,S,tau=1,lam=1):
     '''Returns the scheme Matrix for a particular setup'''
-    return T*lam**2/dt + (1/tau+dt)*S
+    return T*(lam**2/dt) + (1/tau+dt)*S
     # return T/dt
 
-def get_rhs(dt,S,T,U_curr,U_prev,F,tau=1,lam=1):
+def get_rhs(dt,S,T,U_curr,U_prev,F,tau=1,lam=1,boundary=None):
     '''Returns the vector for the left hand side of the equation'''
-    return np.matmul(S/tau + (2*lam**2/dt) * T,U_curr) - np.matmul(T,U_prev/dt*lam**2) - dt*lam**2*np.matmul(T,F)
+
+    BB =  np.matmul(S/tau + (2*lam**2/dt) * T, U_curr) - np.matmul(T,U_prev/dt*lam**2) - dt*np.matmul(T,F)
+    if type(boundary) != type(None):
+        bd_lower,bd_upper,bd_left,bd_right = boundary
+        B_bound = np.matmul(S/tau + (2*lam**2/dt) * T, U_curr) - np.matmul(T,U_prev/dt*lam**2)
+        
+        for p in bd_lower: BB[p] = B_bound[p]
+        for p in bd_upper: BB[p] = B_bound[p]
+        for p in bd_right: BB[p] = B_bound[p]
+        # for p in bd_left:BB[p] = B_bound[p]
+
+    return BB
     # return np.matmul(-S*(1+dt) + (2/dt) * T,U_curr) + np.matmul(S-T/dt,U_prev) - dt*np.matmul(T,F)
 
 
