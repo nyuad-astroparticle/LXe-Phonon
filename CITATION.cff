@@ -1,0 +1,27 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Modelling of Acoustic Signals of Minimum Ionizing
+  Particles in Noble Liquids
+message: Please cite as below
+type: dataset
+authors:
+  - given-names: Panagiotis
+    family-names: Oikonomou
+    email: po524@byu.edu
+    affiliation: >-
+      Division of Science, New York University Abu
+      Dhabi
+    orcid: 'https://orcid.org/0000-0003-2296-6415'
+  - given-names: Francesco
+    family-names: Arneodo
+    affiliation: >-
+      Division of Science, New York University Abu
+      Dhabi
+  - given-names: Laura
+    family-names: Manenti
+    affiliation: >-
+      Division of Science, New York University Abu
+      Dhabi
