@@ -3,14 +3,14 @@
 
 cff-version: 1.2.0
 title: >-
-  Modelling of Acoustic Signals of Minimum Ionizing
+  Modelling of Acoustic Signals of Minimum Ionizing 
   Particles in Noble Liquids
 message: Please cite as below
 type: dataset
 authors:
   - given-names: Panagiotis
     family-names: Oikonomou
-    email: po524@byu.edu
+    email: po524@nyu.edu
     affiliation: >-
       Division of Science, New York University Abu
       Dhabi
@@ -25,3 +25,8 @@ authors:
     affiliation: >-
       Division of Science, New York University Abu
       Dhabi
+repository-code: 'https://github.com/PanosEconomou/LXe-Phonon'
+url: 'https://github.com/PanosEconomou/LXe-Phonon'
+repository: 'https://github.com/PanosEconomou/LXe-Phonon'
+repository-artifact: 'https://github.com/PanosEconomou/LXe-Phonon'
+date-released: '2021-12-01'
