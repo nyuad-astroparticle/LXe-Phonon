@@ -17,7 +17,7 @@ The contents are as follows.
   
 
 ## Notes
-The theoretical paper can be fonud [here](panos.pw "No link yet : (")
+The theoretical paper can be fonud [here](https://www.overleaf.com/read/rpgfgkhkdhjz)
 
 Here is an image of the proposed detector
 
