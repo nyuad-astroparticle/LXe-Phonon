@@ -22,7 +22,7 @@ class bcolors:
 # It is going to be a list of functions with vectorized inputs that is then calculated
 class estimator:
     # Constructor
-    def __init__(self,max_order:int=0, multiprocess=False, n_cores:int=2):
+    def __init__(self,max_order:int=0, multiprocess=False, n_cores:int=2, simplify:bool=False):
         self.max_order  = max_order     # Maximum order to calculate for
         self.n_cores    = n_cores       # Number of corse to be used in multiprocessing
         self.terms_slow = []            # A list for the terms to be calculated for v<1
@@ -36,7 +36,7 @@ class estimator:
             
         else:
             print(bcolors.BOLD+'Generating Estimator for order %d'%self.max_order+bcolors.ENDC)
-            self.assemble_multiprocessing()
+            self.assemble_multiprocessing(simplify=simplify)
 
     # Coefficient
     def C(self, n:int, m:int, l:int):
@@ -101,45 +101,54 @@ class estimator:
 
     # Some wrappers to be used in multiprocessing
     def get_slow_term_func(self,n:int,m:int,l:int,\
+                           simplify:bool=False,
                            r:sp.Symbol=sp.Symbol('r'),
                            z:sp.Symbol=sp.Symbol('z'),
                            t:sp.Symbol=sp.Symbol('t'),
                            v:sp.Symbol=sp.Symbol('v'),
                            L:sp.Symbol=sp.Symbol('L'),
                            a:sp.Symbol=sp.Symbol('a'),
-                           s:sp.Symbol=sp.Symbol('s'),append:bool=False):
+                           s:sp.Symbol=sp.Symbol('s'),
+                           append:bool=False):
         if not append: 
             f = L**n * self.C(n,m,l) * self.get_slow_term(n,m,l)
+            if simplify: f = sp.simplify(f)
             print("\t"+bcolors.OKCYAN+"Slow:"+bcolors.ENDC+"%2d,%2d,%2d "%(n,m,l)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
             return f
-        else: 
-            self.terms_slow.append(lambdify([r,z,t,v,L,a,s],L**n * self.C(n,m,l) * self.get_slow_term(n,m,l),'numpy'))
+        else:
+            f = L**n * self.C(n,m,l) * self.get_slow_term(n,m,l) 
+            if simplify: f = sp.simplify(f)
+            self.terms_slow.append(lambdify([r,z,t,v,L,a,s],f,'numpy'))
             print("\t"+bcolors.OKCYAN+"Slow:"+bcolors.ENDC+"%2d,%2d,%2d "%(n,m,l)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
     
     # Some wrappers to be used in multiprocessing
     def get_fast_term_func(self,n:int,m:int,l:int,\
+                           simplify:bool=False,
                            r:sp.Symbol=sp.Symbol('r'),
                            z:sp.Symbol=sp.Symbol('z'),
                            t:sp.Symbol=sp.Symbol('t'),
                            v:sp.Symbol=sp.Symbol('v'),
                            L:sp.Symbol=sp.Symbol('L'),
                            a:sp.Symbol=sp.Symbol('a'),
-                           s:sp.Symbol=sp.Symbol('s'),append:bool=False):
+                           s:sp.Symbol=sp.Symbol('s'),
+                           append:bool=False):
         
         if not append: 
             f = L**n * self.C(n,m,l) * self.get_fast_term(n,m,l)
+            if simplify: f = sp.simplify(f)
             print("\t"+bcolors.OKBLUE+"Fast:"+bcolors.ENDC+"%2d,%2d,%2d "%(n,m,l)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
             return f
 
         else:
             f = lambdify([r,z,t,v,L,a,s], L**n * self.C(n,m,l) * self.get_fast_term(n,m,l),'numpy')
+            if simplify: f = sp.simplify(f)
             g = (lambda F: lambda r,z,t,v,L,a,s: 0 if abs(z-v*t) <= r*(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L,a,s))(f)
             self.terms_fast.append(np.vectorize(g,excluded=['v','l','a','s']))
             print("\t"+bcolors.OKBLUE+"Fast:"+bcolors.ENDC+"%2d,%2d,%2d "%(n,m,l)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
     
     # If you want to use multiprocessing
     # This function will assemble all the proccesses needed
-    def get_permutations(self,variables:bool=False):
+    def get_permutations(self,simplify:bool=False,variables:bool=False):
         # Define some symbols
         v       = sp.Symbol('v')
         L       = sp.Symbol('L')
@@ -155,13 +164,14 @@ class estimator:
             for m in range(n+1):
                 for l in range(m+1):
                     entry = [n,m,l]
+                    entry.append(simplify)
                     if variables: entry += [r,z,t,v,L,a,s]
                     permutations.append(entry)
                     
         return permutations
         
     # Initialize using multiprocessing pool
-    def assemble_multiprocessing(self):
+    def assemble_multiprocessing(self,simplify:bool=False):
         print("Assembling the estimator using multiprocessing on %d cores"%self.n_cores)
         
         # Define some symbols
@@ -174,7 +184,7 @@ class estimator:
         s       = sp.Symbol('s')
 
         # Get the arguments
-        permutations = self.get_permutations()
+        permutations = self.get_permutations(simplify=simplify)
         print("Permuations created successfully")
         
         # Get a pool
