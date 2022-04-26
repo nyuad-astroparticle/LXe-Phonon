@@ -18,6 +18,12 @@ from multiprocessing import Pool
 from sympy.utilities.lambdify import lambdify
 from scipy.special import binom
 from tqdm.notebook import tqdm
+try:
+    from numba import jit,cuda
+    import cupy as cp
+except ImportError:
+    print("CUDA GPU Acceleration is unavailable for your system : (")
+    pass
 
 # Coloring output
 class bcolors:
@@ -33,11 +39,12 @@ class bcolors:
 
 # We will create a class for the pressure estimator
 # It is going to be a list of functions with vectorized inputs that is then calculated
-class estimator:
+class estimator(object):
     # Constructor
-    def __init__(self, max_order:int=0,n_cores:int=2,slow:bool=True,simplify:bool=False):
+    def __init__(self, max_order:int=0,n_cores:int=2,slow:bool=True,simplify:bool=False,GPU:bool=False):
         self.max_order  = max_order     # Maximum order to calculate for
         self.n_cores    = n_cores       # Number of corse to be used in multiprocessing
+        self.GPU        = GPU           # Do you want to use CUDA for evaluating the function?
         self.slow       = slow          # Store if this is for particles with v<1
         self.terms      = []            # A list for the terms to be calculated
 
@@ -194,18 +201,26 @@ class estimator:
         print('recasting functions')
         for f in tqdm(terms.get()):
             if self.slow:
-                self.terms.append(lambdify([r,z,t,v,L],f,'numpy'))
+                if self.GPU: self.terms.append(lambdify([r,z,t,v,L],f,'cupy'))
+                else: self.terms.append(lambdify([r,z,t,v,L],f,'numpy'))
             else:
-                f = lambdify([r,z,t,v,L], f,'numpy')
-                g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
-                self.terms.append(np.vectorize(g,excluded=['v','L']))
+                if self.GPU: 
+                    f = lambdify([r,z,t,v,L], f,'cupy')
+                    g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
+                    self.terms.append(cp.vectorize(g,excluded=['v','L']))
+                    
+                else:
+                    f = lambdify([r,z,t,v,L], f,'numpy')
+                    g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
+                    self.terms.append(np.vectorize(g,excluded=['v','L']))
 
         print(bcolors.BOLD+bcolors.UNDERLINE+'Estimator Generated Successfully'+bcolors.ENDC)
 
 
-    # Actually make a prediction given a set of data
+    # Actually make a prediction given a set of data 
     def __call__(self,r,z,t,v,l):
         if v == 1: v = 0.9999999
         sum = 0
         for f in self.terms: sum += f(r,z,t,v,l)
         return sum
+    
