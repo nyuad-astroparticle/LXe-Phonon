@@ -51,6 +51,7 @@ class estimator(object):
         # Create the terms
         print(bcolors.BOLD+'Generating Estimator for order %d'%self.max_order+bcolors.ENDC)
         self.assemble_multiprocessing(simplify=simplify)
+        if self.GPU: print(bcolors.BOLD+bcolors.WARNING+'WARNING!'+bcolors.ENDC+' Since you are using GPU accelleration you need to check that your input satisfies these conditions z < v t and (z-v t)^2 > r^2 (v^2 - 1). Otherwise there will be errors')
     
     # Coefficient
     def C(self,n:int,m:int):
@@ -199,15 +200,16 @@ class estimator(object):
 
         # Assign the functions to the appropriate arrays
         print('recasting functions')
-        for f in tqdm(terms.get()):
+        TERMS = terms.get()
+        for f in tqdm(TERMS):
             if self.slow:
                 if self.GPU: self.terms.append(lambdify([r,z,t,v,L],f,'cupy'))
                 else: self.terms.append(lambdify([r,z,t,v,L],f,'numpy'))
             else:
-                if self.GPU: 
-                    f = lambdify([r,z,t,v,L], f,'cupy')
-                    g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
-                    self.terms.append(cp.vectorize(g,excluded=['v','L']))
+                if self.GPU: self.terms.append(lambdify([r,z,t,v,L],f,'cupy'))
+#                     f = lambdify([r,z,t,v,L], sp.Piecewise( (0,z>=v*t),(0,(z-v*t)**2 <= r**2*(v**2 - 1)),(f,True)),'cupy')
+#                     g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z>v*t) else F(r,z,t,v,L))(f)
+#                     self.terms.append(f)
                     
                 else:
                     f = lambdify([r,z,t,v,L], f,'numpy')
@@ -215,6 +217,8 @@ class estimator(object):
                     self.terms.append(np.vectorize(g,excluded=['v','L']))
 
         print(bcolors.BOLD+bcolors.UNDERLINE+'Estimator Generated Successfully'+bcolors.ENDC)
+        
+        
 
 
     # Actually make a prediction given a set of data 
