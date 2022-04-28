@@ -241,8 +241,9 @@ class fluid:
     # atomic_number()
     
     # Constructor
-    def __init__(self,filename:str=None,rest_density:float=2966.3,viscosity:float=1.7e-2,sound_speed:float=653.47,bulk_modulus:float=1.2667e9, specific_heat:float=338.48,thermal_expansion:float=0.0013952,ionization_potential:float=2.243e-18,molar_mass:float=131.293,atomic_number:float=54):
+    def __init__(self,filename:str=None,rest_density:float=2966.3,viscosity:float=1.7e-2,sound_speed:float=653.47,bulk_modulus:float=1.2667e9, specific_heat:float=338.48,thermal_expansion:float=0.0013952,ionization_potential:float=2.243e-18,molar_mass:float=131.293,atomic_number:float=54,name:str = 'Null'):
         
+        self.name = name
         if filename is None:
             self.rest_density         = rest_density
             self.viscosity            = viscosity
@@ -254,7 +255,7 @@ class fluid:
             self.molar_mass           = molar_mass
             self.atomic_number        = atomic_number
         else:
-                        self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.ionization_potentia,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
+                        self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.ionization_potential,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
     
     # Create Fluid from file
     def create_from_filename(self,filename:str='./data/fluids/LXE.txt'):
@@ -272,24 +273,30 @@ class fluid:
         r_e   = c.e**2/(4*c.pi*c.epsilon_0* c.electron_mass * c.c**2)
         K     = 4 * c.pi * c.N_A * r_e**2 * c.electron_mass * c.c**2
         A     = self.molar_mass*1e-3
-        ksi   = K * Z * x * particle.charge**2 / (2 * A * beta**2 * c.elementary_charge)
+        ksi   = K * self.atomic_number * x * particle.charge**2 / (2 * A * beta**2 * c.elementary_charge)
         
-        return ksi * (np.log(2*c.electron_mass * c.c**2 * beta**2 * gamma**2 * ksi /self.ionization_potential**2) - beta**2)
+        return ksi * (np.log(2 * particle.mass * c.c**2 * beta**2 * gamma**2 * ksi / self.ionization_potential**2) - beta**2)
         
     
     # Get the constant multiplier for the source term
     def source_multiplier(self):
-        return self.thermal_expansion/self.specific_heat
+        return - self.thermal_expansion/self.specific_heat
     
     # And the actual coefficient in front of the distribution of the thing
     def energy_deposition(self,particle,x:float=1):
         return self.source_multiplier() * particle.speed * self.max_energy(particle,x=x)
     
-    
+    # Get the viscosity coefficient
+    def viscosity_coefficient(self):
+        return self.viscosity / self.bulk_modulus
+        
 # Particle class
 class particle:
     # Constructor
-    def __init__(self,filename:str = None, mass:float=1.883531627e-28,charge:float=-1.60217662e-19,speed:float=0.99*c.c):
+    def __init__(self,filename:str = None, mass:float=1.883531627e-28,charge:float=-1.60217662e-19,speed:float=0.99*c.c,name:str = 'Null'):
+
+        self.name = name
+        
         if filename is None:
             self.mass   = mass
             self.charge = charge
