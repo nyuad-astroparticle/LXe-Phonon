@@ -14,6 +14,7 @@
 
 import numpy as np
 import sympy as sp
+import scipy.constants as c
 from multiprocessing import Pool
 from sympy.utilities.lambdify import lambdify
 from scipy.special import binom
@@ -226,4 +227,86 @@ class estimator(object):
         sum = 0
         for f in self.terms: sum += f(r,z,t,v,l)
         return sum
+    
+# Class that represents a fluid
+class fluid:
+    # rest_density(kg/m3)
+    # viscosity(Pa*s)
+    # sound_speed(m/s)
+    # bulk_modulus(kg/s2m)
+    # specific_heat_p(J/kgK)
+    # thermal_expansion(/K)
+    # ionization_potential(J)
+    # molar_mass(u)
+    # atomic_number()
+    
+    # Constructor
+    def __init__(self,filename:str=None,rest_density:float=2966.3,viscosity:float=1.7e-2,sound_speed:float=653.47,bulk_modulus:float=1.2667e9, specific_heat:float=338.48,thermal_expansion:float=0.0013952,ionization_potential:float=2.243e-18,molar_mass:float=131.293,atomic_number:float=54):
+        
+        if filename is None:
+            self.rest_density         = rest_density
+            self.viscosity            = viscosity
+            self.sound_speed          = sound_speed
+            self.bulk_modulus         = bulk_modulus
+            self.specific_heat        = specific_heat
+            self.thermal_expansion    = thermal_expansion
+            self.ionization_potential = ionization_potential
+            self.molar_mass           = molar_mass
+            self.atomic_number        = atomic_number
+        else:
+                        self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.ionization_potentia,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
+    
+    # Create Fluid from file
+    def create_from_filename(self,filename:str='./data/fluids/LXE.txt')
+        file = open(filename)
+        data = file.read()
+        file.close()
+        return float(l.split(':')[-1]) for l in data.split('\n')[:9]
+    
+    
+    # Get Most probable energy deposition per unit length
+    def max_energy(self,particle,x:float=1):
+        v     = particle.speed
+        beta  = v/c.c
+        gamma = 1/np.sqrt(1-beta**2)
+        r_e   = c.e**2/(4*c.pi*c.epsilon_0* c.electron_mass * c.c**2)
+        K     = 4 * c.pi * c.N_A * r_e**2 * c.electron_mass * c.c**2
+        A     = self.molar_mass*1e-3
+        ksi   = K * Z * x * particle.charge**2 / (2 * A * beta**2 * c.elementary_charge)
+        
+        return ksi * (np.log(2*c.electron_mass * c.c**2 * beta**2 * gamma**2 * ksi /self.ionization_potential**2) - beta**2)
+        
+    
+    # Get the constant multiplier for the source term
+    def source_multiplier(self):
+        return self.thermal_expansion/self.specific_heat
+    
+    # And the actual coefficient in front of the distribution of the thing
+    def energy_deposition(self,particle,x:float=1):
+        return self.source_multiplier() * particle.speed * self.max_energy(particle,x=x)
+    
+    
+# Particle class
+class particle:
+    # Constructor
+    def __init__(self,filename:str = None, mass:float=1.883531627e-28,charge:float=-1.60217662e-19,speed:float=0.99*c.c):
+        if filename is None:
+            self.mass   = mass
+            self.charge = charge
+            self.speed  = speed
+            
+        else:
+            self.mass,self.charge,self.speed = self.create_from_filename(filename)
+        
+    # Create from filename
+    def create_from_filename(self,filename:str='./data/particles/muon.txt'):
+        file = open(filename)
+        data = file.read()
+        file.close()
+        return float(l.split(':')[-1]) for l in data.split('\n')[:3]
+    
+    def __call__(self,v:float):
+        self.v = v
+        
+    
     
