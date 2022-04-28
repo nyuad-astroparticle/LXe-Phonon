@@ -257,11 +257,11 @@ class fluid:
                         self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.ionization_potentia,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
     
     # Create Fluid from file
-    def create_from_filename(self,filename:str='./data/fluids/LXE.txt')
+    def create_from_filename(self,filename:str='./data/fluids/LXE.txt'):
         file = open(filename)
         data = file.read()
         file.close()
-        return float(l.split(':')[-1]) for l in data.split('\n')[:9]
+        return [float(l.split(':')[-1]) for l in data.split('\n')[:9]]
     
     
     # Get Most probable energy deposition per unit length
@@ -303,7 +303,7 @@ class particle:
         file = open(filename)
         data = file.read()
         file.close()
-        return float(l.split(':')[-1]) for l in data.split('\n')[:3]
+        return [float(l.split(':')[-1]) for l in data.split('\n')[:3]]
     
     def __call__(self,v:float):
         self.v = v
