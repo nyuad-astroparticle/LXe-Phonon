@@ -1,8 +1,8 @@
 #################################################################
 #                                                               #
-#       PhononPy a library for sound physics                    #
+#       PyPhonon a library for sound physics                    #
 #                                                               #
-# Phononpy is a project to calculate the acoustic signals       #
+# Pyphonon is a project to calculate the acoustic signals       #
 # that particles create in various noninteracting liquids       #
 #                                                               #
 # It uses multiprocessing to run on a machine that supports     #
@@ -19,7 +19,6 @@ from sympy.utilities.lambdify import lambdify
 from scipy.special import binom
 from tqdm.notebook import tqdm
 try:
-    from numba import jit,cuda
     import cupy as cp
 except ImportError:
     print("CUDA GPU Acceleration is unavailable for your system : (")
