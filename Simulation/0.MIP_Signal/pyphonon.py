@@ -236,12 +236,12 @@ class fluid:
     # bulk_modulus(kg/s2m)
     # specific_heat_p(J/kgK)
     # thermal_expansion(/K)
-    # ionization_potential(J)
+    # mean_excitation_energy(J)
     # molar_mass(u)
     # atomic_number()
     
     # Constructor
-    def __init__(self,filename:str=None,rest_density:float=2966.3,viscosity:float=1.7e-2,sound_speed:float=653.47,bulk_modulus:float=1.2667e9, specific_heat:float=338.48,thermal_expansion:float=0.0013952,ionization_potential:float=2.243e-18,molar_mass:float=131.293,atomic_number:float=54,name:str = 'Null'):
+    def __init__(self,filename:str=None,rest_density:float=2966.3,viscosity:float=1.7e-2,sound_speed:float=653.47,bulk_modulus:float=1.2667e9, specific_heat:float=338.48,thermal_expansion:float=0.0013952,mean_excitation_energy:float=2.243e-18,molar_mass:float=131.293,atomic_number:float=54,name:str = 'Null'):
         
         self.name = name
         if filename is None:
@@ -251,11 +251,11 @@ class fluid:
             self.bulk_modulus         = bulk_modulus
             self.specific_heat        = specific_heat
             self.thermal_expansion    = thermal_expansion
-            self.ionization_potential = ionization_potential
+            self.mean_excitation_energy = mean_excitation_energy
             self.molar_mass           = molar_mass
             self.atomic_number        = atomic_number
         else:
-                        self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.ionization_potential,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
+                        self.rest_density,self.viscosity,self.sound_speed,self.bulk_modulus,self.specific_heat,self.thermal_expansion,self.mean_excitation_energy,self.molar_mass,self.atomic_number = self.create_from_filename(filename)
     
     # Create Fluid from file
     def create_from_filename(self,filename:str='./data/fluids/LXE.txt'):
@@ -270,12 +270,14 @@ class fluid:
         v     = particle.speed
         beta  = v/c.c
         gamma = 1/np.sqrt(1-beta**2)
-        r_e   = c.e**2/(4*c.pi*c.epsilon_0* c.electron_mass * c.c**2)
-        K     = 4 * c.pi * c.N_A * r_e**2 * c.electron_mass * c.c**2
-        A     = self.molar_mass*1e-3
-        ksi   = K * self.atomic_number * x * particle.charge**2 / (2 * A * beta**2 * c.elementary_charge)
+        K     = 0.307075 # MeV/mol cm^2
+        A     = self.molar_mass # g/mol
+#         mass_thickness = x * self.rest_density * 1e-3
+        mass_thickness = x * 2.953
+        ksi   = K * self.atomic_number * mass_thickness * particle.charge**2 / (2 * A * beta**2 * c.elementary_charge**2)
         
-        return ksi * (np.log(2 * particle.mass * c.c**2 * beta**2 * gamma**2 * ksi / self.ionization_potential**2) - beta**2)
+        return ksi * (np.log(2 * 0.510998928 * beta**2 * gamma**2 * ksi *1e12 / (self.mean_excitation_energy/c.eV)**2) - beta**2) / mass_thickness
+#         return ksi * (np.log(2 * 0.510998928 * beta**2 * gamma**2 * ksi * 1e12 / (11.5)**2) - beta**2) / mass_thickness
         
     
     # Get the constant multiplier for the source term
