@@ -1,0 +1,9 @@
+rest_density(kg/m3):	1204
+viscosity(Pa*s):	1.4466e-4
+sound_speed(m/s):	612.19
+bulk_modulus(kg/s2m):	4.512e8
+specific_heat_p(J/kgK):	1869
+thermal_expansion(/K):	? (Can't find it! I only found values for the gas state.)
+mean_excitation_energy(J):2.195e-17
+molar_mass(u):		20.1797
+atomic_number():	10
