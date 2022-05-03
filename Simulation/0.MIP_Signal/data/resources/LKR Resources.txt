@@ -1,0 +1,31 @@
+Source 1:
+https://www.reaxys.com/#/search/quick
+	-rest_density
+		+Baidakov, V. G.; Gurina, T. A.[Physica B: Condensed Matter][Physica B: Condensed Matter, 1989, vol. 160, p. 211 - 230]
+
+	-specific_heat_p (44.8 J/molK = 560 J/kgK)
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p. 771 - 777]
+
+	-thermal_expansion
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p. 771 - 777]
+
+-----------------------------------------------------
+
+Source 2:
+https://webbook.nist.gov/chemistry/name-ser/
+	-viscosity
+	-sound_speed
+
+-----------------------------------------------------
+
+Source 3:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+	-mean_excitation_energy
+
+-----------------------------------------------------
+
+Source 4:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 1156123731.0 Pa = 1.1561e9 Pa

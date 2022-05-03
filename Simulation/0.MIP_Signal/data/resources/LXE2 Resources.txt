@@ -1,0 +1,32 @@
+Source 1:
+https://webbook.nist.gov/chemistry/name-ser/
+	-viscosity
+	-sound_speed
+	-used to check most values!
+
+-----------------------------------------------------
+
+Source 2:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+	-mean_excitation_energy
+
+-----------------------------------------------------
+
+Source 3:
+https://www.reaxys.com/#/search/quick
+	-thermal_expansion:
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p. 771 - 777]
+
+	-rest_density:
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p. 771 - 777]
+
+	-specific_heat_p (44.16J/molK = 339.69J/kgK):
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p. 771 - 777]
+
+-----------------------------------------------------
+
+Source 4:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 1276130007 Pa = 1.276e9 Pa

@@ -1,0 +1,32 @@
+Source 1:
+https://webbook.nist.gov/chemistry/name-ser/
+	-viscosity
+	-sound_speed
+	-specific_heat_p
+
+-----------------------------------------------------
+
+Source 2:
+https://www.reaxys.com/#/organization
+
+	-rest_density
+		+Mathias; Crommelin; Kamerlingh Onnes[Comptes Rendus Hebdomadaires des Seances de l'Academie des Sciences, 1922, vol. 175, p. 933 - 933]
+		+Mathias; Crommelin; Kamerlingh Onnes[Comm. Leiden 162 b]
+		+No author[Gmelin Handbuch der Anorganischen Chemie, Gmelin Handbook: He: Edelgase/MVol., 23, page 107 - 109]
+
+
+-----------------------------------------------------
+
+Source 3:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+
+	-mean_excitation_energy
+	-density
+
+-----------------------------------------------------
+
+Source 4:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 451231021.7 Pa = 4.512e8 Pa

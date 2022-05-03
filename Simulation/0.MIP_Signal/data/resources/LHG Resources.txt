@@ -1,0 +1,45 @@
+Source 1:
+https://www.reaxys.com/#/search/quick
+	-rest_density (checked here for paper proving the value taken from pdg.lbl.gov)
+		+Skrbek; Niemela; Donnelly[Journal of Physics Condensed Matter, 1999, vol. 11, # 40, p. 7761 - 7782]
+
+	-specific_heat_p
+		+Pickard, G. L.; Simon, F. E.; White, G. K.[Proceedings of the Physical Society (1958), 1948, vol. 61, p. 1 - 9]
+		+No author[Gmelin Handbuch der Anorganischen Chemie, Gmelin Handbook: Hg: MVol.A1, 4.3.5, page 361 - 369]
+
+	-thermal expansion
+		+Singh; Arafin; George[Physica B: Condensed Matter, 2007, vol. 387, # 1-2, p. 344 - 351]
+
+	-
+
+-------------------------------------------
+
+Source 2:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+	-molar mass
+	-rest_density (taken from here)
+
+-------------------------------------------
+
+Source 3
+https://link.springer.com/referenceworkentry/10.1007/978-1-4614-1533-6_307#:~:text=Physical%20Properties,is%20liquid%20at%20room%20temperature.&text=Due%20to%20its%20high%20surface,a%20thick%20silvery%20amalgam%20paste.
+
+	-viscosity
+
+	+Habashi F (1998) Principles of extractive metallurgy, vol 4, Amalgam and electrometallurgy. Métallurgie Extractive Québec, Québec.
+	+Simon M et al (1998) Mercury. In: Habashi F (ed) Handbook of extractive metallurgy. Wiley-VCH, Weinheim, pp 891–922
+
+-----------------------------------------------------
+
+Source 4:
+J. Chem. Phys. 46, 2650 (1967); https://doi.org/10.1063/1.1841095
+
+	-sound_speed
+
+-----------------------------------------------------
+
+Source 5:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 2849280464 Pa = 2.849e9 Pa

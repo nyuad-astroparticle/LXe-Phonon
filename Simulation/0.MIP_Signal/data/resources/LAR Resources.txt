@@ -1,0 +1,35 @@
+Source 1:
+https://webbook.nist.gov/cgi/inchi?ID=C7440371&Mask=4
+
+	-viscosity
+	-sound_speed
+
+-----------------------------------------------------
+
+Source 2:
+https://www.reaxys.com/#/organization
+
+	-specific_heat_p
+		+Eucken[Verhandlungen der Deutschen Physikalischen Gesellschaft, 1916, vol. 18, p. 10 - 10]
+		+No author[Gmelin Handbuch der Anorganischen Chemie, Gmelin Handbook: He: Edelgase/MVol., 37, page 144 - 146]
+
+	-thermal_expansion
+		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p.
+
+	-
+
+-----------------------------------------------------
+
+Source 3:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+
+	-mean_excitation_energy
+	-rest_density
+
+-----------------------------------------------------
+
+Source 4:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 981479410.2 Pa = 9.815e8 Pa
