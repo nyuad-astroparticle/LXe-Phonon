@@ -12,7 +12,8 @@
 #                                                               #
 #################################################################
 
-import numpy as np
+from numpy import math
+import autograd.numpy as np
 import sympy as sp
 import scipy.constants as c
 from multiprocessing import Pool
@@ -55,7 +56,7 @@ class estimator(object):
     
     # Coefficient
     def C(self,n:int,m:int):
-        return 2**m /(4**(n+1) + np.pi * np.math.factorial(m)) * binom(2*n - m,n)
+        return 2**m /(4**(n+1) + np.pi * math.factorial(m)) * binom(2*n - m,n)
 
     # Define the source function
     def q(self,t):
@@ -65,7 +66,8 @@ class estimator(object):
     # Solutions
     def T(self,r,z,t,v,sgn=1):
         gamma_sq = 1/(1-v**2)
-        return gamma_sq*(t- v*z) + sgn*sp.sqrt(gamma_sq**2*(z-v*t)**2 + gamma_sq*r**2)
+        # return gamma_sq*(t - v*z) + sgn*sp.sqrt(gamma_sq**2*(z-v*t)**2 + gamma_sq*r**2)
+        return gamma_sq*(t - v*z) + gamma_sq*sgn*sp.sqrt((z-v*t)**2 + 1/gamma_sq*r**2)
 
     # Get slow term
     def get_slow_term(self,n:int,m:int,
@@ -96,7 +98,7 @@ class estimator(object):
 
         # Calculate the derivative
         der = sp.diff((t-T)**m * self.q(T)/(v*(z-v*T) - sp.sqrt(r**2 + (z-v*T)**2)),T,m)
-        
+
         # Substitute solutions
         der = der.subs(T,self.T(r,z,t,v,sgn=-1)) + der.subs(T,self.T(r,z,t,v,sgn=1))
 
@@ -141,7 +143,7 @@ class estimator(object):
         else:
             f = lambdify([r,z,t,v,L], L**n * self.C(n,m) * self.get_fast_term(n,m,r,z,t,v),'numpy')
             if simplify: f = sp.simplify(f)
-            g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
+            g = (lambda F: lambda r,z,t,v,L: 0. if abs(z-v*t) <= r*(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
             self.terms.append(np.vectorize(g,excluded=['v','L']))
             print("\t"+bcolors.OKBLUE+"Fast:"+bcolors.ENDC+"%2d,%2d "%(n,m)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
 
@@ -214,7 +216,7 @@ class estimator(object):
                     
                 else:
                     f = lambdify([r,z,t,v,L], f,'numpy')
-                    g = (lambda F: lambda r,z,t,v,L: 0 if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
+                    g = (lambda F: lambda r,z,t,v,L: 0. if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
                     self.terms.append(np.vectorize(g,excluded=['v','L']))
 
         print(bcolors.BOLD+bcolors.UNDERLINE+'Estimator Generated Successfully'+bcolors.ENDC)
@@ -225,7 +227,7 @@ class estimator(object):
     # Actually make a prediction given a set of data 
     def __call__(self,r,z,t,v,l):
         if v == 1: v = 0.9999999
-        sum = 0
+        sum = 0.
         for f in self.terms: sum += f(r,z,t,v,l)
         return sum
     
