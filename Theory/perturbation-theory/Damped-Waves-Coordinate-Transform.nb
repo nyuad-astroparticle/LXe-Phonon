@@ -1,0 +1,427 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     16595,        419]
+NotebookOptionsPosition[     13893,        373]
+NotebookOutlinePosition[     14294,        389]
+CellTagsIndexPosition[     14251,        386]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Damped Acoustic Waves", "Title",
+ CellChangeTimes->{{3.855037885036853*^9, 
+  3.855037900642807*^9}},ExpressionUUID->"e6353dfe-c4ea-4c5f-8412-\
+0ef0b190bf16"],
+
+Cell["\<\
+Perturbative approximation to the Strongly Damped Wave Equation\
+\>", "Subtitle",
+ CellChangeTimes->{{3.855037903869801*^9, 
+  3.855037931046073*^9}},ExpressionUUID->"1428bc16-c6bb-4b04-8ddf-\
+e2d61774c5de"],
+
+Cell[CellGroupData[{
+
+Cell["Perturbative Approximation", "Section",
+ CellChangeTimes->{{3.855037958573225*^9, 3.855037977908058*^9}, {
+  3.855038052979137*^9, 
+  3.855038057400021*^9}},ExpressionUUID->"537b5d3c-adf6-40bd-9b3c-\
+0508043af8a0"],
+
+Cell["\<\
+The wave equation we are attempting to solve is derived using Navier - Stokes \
+and takes into account a damping contribution due to the viscosity of the \
+liquid. It is given by:\
+\>", "Text",
+ CellChangeTimes->{{3.855038147510397*^9, 
+  3.855038277548801*^9}},ExpressionUUID->"1e0a4967-d4c2-46a0-bbd1-\
+3a225a2d02e9"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{"\[EmptySquare]", "\[Phi]", "+", "\[Lambda]\[CapitalDelta]", 
+       SubscriptBox["\[PartialD]", 
+        StyleBox["t", "TI"]], "\[Phi]", "\[LongEqual]", "-", 
+       SubscriptBox["\[PartialD]", 
+        StyleBox["t", "TI"]], 
+       StyleBox["f", "TI"]}], TraditionalForm], "errors" -> {}, "input" -> 
+   "\\Box \\phi + \\lambda \\Delta \\partial_t \\phi = -\\partial_t f", 
+   "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{{3.855038438671681*^9, 3.855038445065703*^9}},
+ TextAlignment->Center,ExpressionUUID->"0e078e16-ef9f-4a83-b09a-775ef0ef682f"],
+
+Cell["\<\
+We can derive a perturbation scheme for this equation where the solution will \
+be given by:\
+\>", "Text",
+ CellChangeTimes->{{3.855038565376321*^9, 3.855038566173963*^9}, {
+  3.855038600678667*^9, 3.855038621340908*^9}, {3.8550387230245457`*^9, 
+  3.855038725697668*^9}, {3.855038769437546*^9, 
+  3.855038782256442*^9}},ExpressionUUID->"659d1a30-bb55-4ead-9156-\
+eea272697f1b"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{"\[Phi]", 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}], "\[LongEqual]", 
+       UnderoverscriptBox["\[Sum]", 
+        RowBox[{
+          StyleBox["i", "TI"], "\[LongEqual]", "0"}], "\[Infinity]", 
+        LimitsPositioning -> True], 
+       SuperscriptBox["\[Lambda]", 
+        StyleBox["i", "TI"]], 
+       SubscriptBox["\[Phi]", 
+        StyleBox["i", "TI"]], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> "\\phi(x) = \\sum_{i=0}^{\\infty} \\lambda^i \\phi_i(x)", 
+   "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{3.855038796005809*^9},
+ TextAlignment->Center,ExpressionUUID->"b861ade1-9a9c-4124-bef8-ad82dedc6384"],
+
+Cell["\<\
+where each term of the expansion can solves the Global Cauchy problem of the \
+following equation\
+\>", "Text",
+ CellChangeTimes->{{3.855038900762493*^9, 3.855038915868494*^9}, {
+  3.855038953727291*^9, 
+  3.855038992012512*^9}},ExpressionUUID->"9ca2f716-36b8-42c7-b13e-\
+e149a5606813"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{
+       SuperscriptBox["\[EmptySquare]", 
+        RowBox[{
+          StyleBox["n", "TI"], "+", "1"}]], 
+       SubscriptBox["\[Phi]", 
+        StyleBox["n", "TI"]], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}], "\[LongEqual]", "-", 
+       SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{"\[CapitalDelta]", 
+            SubscriptBox["\[PartialD]", 
+             StyleBox["t", "TI"]]}], ")"}], 
+        StyleBox["n", "TI"]], 
+       SubscriptBox["\[PartialD]", 
+        StyleBox["t", "TI"]], 
+       StyleBox["f", "TI"]}], TraditionalForm], "errors" -> {}, "input" -> 
+   "\\Box^{n+1} \\phi_n(x) = -\\left( \\Delta \\partial_t \\right)^n \
+\\partial_t f", "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.855038796005809*^9, {3.855039888733683*^9, 3.85503989752853*^9}},
+ TextAlignment->Center,ExpressionUUID->"515b1456-9991-49ef-8569-81674bb11a9f"],
+
+Cell["\<\
+The derivation of which is seen on the overleaf paper. Here we are concerned \
+with actually solving this equation for the various source functions and \
+discussing some of their properties.\
+\>", "Text",
+ CellChangeTimes->{{3.855039125560773*^9, 3.8550391906016197`*^9}, {
+  3.8550392539949713`*^9, 
+  3.855039270474421*^9}},ExpressionUUID->"b11267e2-e9a3-49f3-8b4e-\
+9d23ca3c840b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["General attempts to solve the equation", "Section",
+ CellChangeTimes->{{3.855037958573225*^9, 3.855037977908058*^9}, {
+  3.855038052979137*^9, 3.855038057400021*^9}, {3.8550393011173353`*^9, 
+  3.855039304243095*^9}, {3.8550396026194277`*^9, 
+  3.85503961725036*^9}},ExpressionUUID->"18637c53-2304-4cde-b949-\
+09019aaf100c"],
+
+Cell["\<\
+To solve the Global Cauchy problem for all of these equations, it is \
+important that we have a way to solve the equations for each order in the \
+perturbation theory. A general solution to them is, in fact, possible, \
+however, we don\[CloseCurlyQuote]t aim to calculate it here. However, we will \
+still generalize as much as possible providing a unified approach to solving \
+this problem.\
+\>", "Text",
+ CellChangeTimes->{{3.855039307542927*^9, 3.855039355930917*^9}, {
+  3.855039402224351*^9, 3.855039548569306*^9}, {3.855039584270259*^9, 
+  3.855039595209208*^9}, {3.855039626834146*^9, 
+  3.855039634633274*^9}},ExpressionUUID->"a4e11012-62df-43cf-b269-\
+7b63ce7e0652"],
+
+Cell[CellGroupData[{
+
+Cell["Using a potential", "Subsubsection",
+ CellChangeTimes->{{3.855039657351128*^9, 
+  3.85503966652763*^9}},ExpressionUUID->"2434ea05-b225-48e2-9b37-\
+453daf5d7604"],
+
+Cell[TextData[{
+ "To solve (3) we will use Green\[CloseCurlyQuote]s Functions. Specifically, \
+we will calculate the retarded propagator for each order and convolve with \
+the source. But before we do so, perhaps would be instructive to simplify the \
+source term as much as possible. To do so, we will use a potential ",
+ Cell[BoxData[
+  FormBox[
+   TemplateBox[Association[
+    "boxes" -> FormBox["\[Psi]", TraditionalForm], "errors" -> {}, "input" -> 
+     "\\psi", "state" -> "Boxes"],
+    "TeXAssistantTemplate"], TraditionalForm]],ExpressionUUID->
+  "523e7f86-5eb5-4693-9867-cd8cfd4cd841"],
+ " defined such that"
+}], "Text",
+ CellChangeTimes->{
+  3.8550396366949587`*^9, {3.85503966837179*^9, 
+   3.855039724360261*^9}},ExpressionUUID->"21c3fe04-03cc-4a75-8f9f-\
+9666a4ca758d"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{
+       SubscriptBox["\[Phi]", 
+        StyleBox["n", "TI"]], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}], "\[LongEqual]", 
+       SuperscriptBox[
+        RowBox[{"(", 
+          RowBox[{"\[CapitalDelta]", 
+            SubscriptBox["\[PartialD]", 
+             StyleBox["t", "TI"]]}], ")"}], 
+        StyleBox["n", "TI"]], 
+       SubscriptBox["\[PartialD]", 
+        StyleBox["t", "TI"]], 
+       SubscriptBox["\[Psi]", 
+        StyleBox["n", "TI"]], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> 
+   "\\phi_n(x) = \\left( \\Delta \\partial_t \\right)^n \\partial_t \
+\\psi_n(x)", "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.855038796005809*^9, {3.8550398082126904`*^9, 3.855039814124402*^9}},
+ TextAlignment->Center,ExpressionUUID->"fe9a7f0c-7056-4edb-b40e-8d5d186ff3ff"],
+
+Cell[TextData[{
+ "Therefore, solving for ",
+ Cell[BoxData[
+  FormBox[
+   TemplateBox[Association[
+    "boxes" -> FormBox["\[Psi]", TraditionalForm], "errors" -> {}, "input" -> 
+     "\\psi", "state" -> "Boxes"],
+    "TeXAssistantTemplate"], TraditionalForm]],ExpressionUUID->
+  "56ec119e-41db-4ed2-805a-0c6273092d88"],
+ " and simply taking some derivatives will allow us to solve the equation. \
+But what equation does the potential satisfy? It is straightforward to derive \
+that since the potential is one linear differential operator away from the \
+actual pressure field. Therefore its equation is"
+}], "Text",
+ CellChangeTimes->{{3.8550397763845463`*^9, 3.855039883496644*^9}, {
+  3.85503996066054*^9, 
+  3.85503998762335*^9}},ExpressionUUID->"5054998a-0aa3-40b4-bee9-\
+6e466b4ce9d1"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{
+       SuperscriptBox["\[EmptySquare]", 
+        RowBox[{
+          StyleBox["n", "TI"], "+", "1"}]], 
+       SubscriptBox["\[Psi]", 
+        StyleBox["n", "TI"]], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}], "\[LongEqual]", "-", 
+       StyleBox["f", "TI"], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> "\\Box^{n+1} \\psi_n(x) = - f(x)", "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.855038796005809*^9, {3.8550398082126904`*^9, 3.855039814124402*^9}},
+ TextAlignment->Center,ExpressionUUID->"1486f235-d182-4044-83cf-b81306797a57"],
+
+Cell["Now this is something we can work on!", "Text",
+ CellChangeTimes->{{3.85504003221651*^9, 
+  3.8550400407063007`*^9}},ExpressionUUID->"ccf38b97-78bb-4244-bd71-\
+63189771e85c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Green\[CloseCurlyQuote]s Functions", "Subsubsection",
+ CellChangeTimes->{{3.855039657351128*^9, 3.85503966652763*^9}, {
+  3.855040053257544*^9, 
+  3.855040055729423*^9}},ExpressionUUID->"9993f284-a914-43af-a70b-\
+8a673357b178"],
+
+Cell["\<\
+As mentioned above, to solve equation (5) it would be instructive to use \
+Green\[CloseCurlyQuote]s Functions. Since we are solving for the Cauchy \
+Global problem we want to find the retarded propagator. To do so we can use a \
+Fourier Transform defined below \
+\>", "Text",
+ CellChangeTimes->{{3.855040059249411*^9, 3.85504012692778*^9}, {
+  3.855040283701429*^9, 
+  3.855040314647028*^9}},ExpressionUUID->"b5ccecc6-11f6-4eaa-adc7-\
+8cc6c41d56d3"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{
+       SuperscriptBox[
+        StyleBox["F", "TI"], "-1"], 
+       RowBox[{"[", 
+         OverscriptBox[
+          StyleBox["f", "TI"], "~"], "]"}], 
+       RowBox[{"(", 
+         StyleBox["x", "TI"], ")"}], "\[LongEqual]", 
+       SubscriptBox["\[Integral]", 
+        SuperscriptBox[
+         StyleBox["R", FontSlant -> "Plain"], "4"]], 
+       FractionBox[
+        RowBox[{
+          SuperscriptBox[
+           StyleBox["d", "TI"], "4"], 
+          StyleBox["k", "TI"]}], 
+        SuperscriptBox[
+         RowBox[{"(", 
+           RowBox[{"2", "\[Pi]"}], ")"}], "4"]], 
+       OverscriptBox[
+        StyleBox["f", "TI"], "~"], 
+       RowBox[{"(", "\[Omega]", ")"}], 
+       SuperscriptBox[
+        StyleBox["e", "TI"], 
+        RowBox[{
+          StyleBox["i", "TI"], 
+          StyleBox["k", "TI"], 
+          StyleBox["x", "TI"]}]]}], TraditionalForm], "errors" -> {}, "input" -> 
+   "\\mathcal{F}^{-1}[\\Tilde{f}](x) = \\int_{\\mathbb{R}^4} \\frac{d^4 k}{(2 \
+\\pi)^4} \\Tilde{f}(\\omega) e^{i k x}", "state" -> "Boxes"],
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.855038796005809*^9, {3.8550398082126904`*^9, 3.855039814124402*^9}},
+ TextAlignment->Center,ExpressionUUID->"f5522afb-29d5-4902-83aa-b6f3ca78ade4"],
+
+Cell[TextData[{
+ "This way we can find the fourier transform of the retarded propagator for \
+this problem ",
+ Cell[BoxData[
+  FormBox[
+   TemplateBox[Association["boxes" -> FormBox[
+       SubscriptBox[
+        StyleBox["G", "TI"], 
+        StyleBox["n", "TI"]], TraditionalForm], "errors" -> {}, "input" -> 
+     "\\mathcal{G}_n", "state" -> "Boxes"],
+    "TeXAssistantTemplate"], TraditionalForm]],ExpressionUUID->
+  "303c1266-9f29-4f44-9ca7-ec9ada5598c2"],
+ " by calculating the following limit"
+}], "Text",
+ CellChangeTimes->{{3.855040433937995*^9, 
+  3.855040525303877*^9}},ExpressionUUID->"3b9a61e4-4803-41d3-91cb-\
+e46623ea5579"],
+
+Cell[BoxData[
+ TemplateBox[Association["boxes" -> FormBox[
+     RowBox[{
+       SubscriptBox[
+        StyleBox["G", "TI"], 
+        StyleBox["n", "TI"]], "\[LongEqual]", 
+       UnderscriptBox["lim", 
+        RowBox[{"\[Epsilon]", "\[Rule]", "0"}], LimitsPositioning -> True], 
+       SubscriptBox[
+        StyleBox["G", "TI"], 
+        RowBox[{
+          StyleBox["n", "TI"], ",", "\[Epsilon]"}]], "\[LongEqual]", 
+       UnderscriptBox["lim", 
+        RowBox[{"\[Epsilon]", "\[Rule]", "0"}], LimitsPositioning -> True], 
+       SubscriptBox["\[Integral]", 
+        SuperscriptBox[
+         StyleBox["R", FontSlant -> "Plain"], "4"]], 
+       FractionBox[
+        RowBox[{
+          SuperscriptBox[
+           StyleBox["d", "TI"], "4"], 
+          StyleBox["k", "TI"]}], 
+        SuperscriptBox[
+         RowBox[{"(", 
+           RowBox[{"2", "\[Pi]"}], ")"}], "4"]]}], TraditionalForm], 
+   "errors" -> {}, "input" -> 
+   "G_n = \\lim_{\\varepsilon \\to 0}G_{n,\\varepsilon} = \\lim_{\\varepsilon \
+\\to 0} \\int_{\\mathbb{R}^4} \\frac{d^4 k}{(2 \\pi)^4}", "state" -> "Boxes"],
+  
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.855038796005809*^9, {3.8550398082126904`*^9, 3.855039814124402*^9}},
+ TextAlignment->Center,ExpressionUUID->"63ea5723-542e-4b38-a128-4f075279846c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{Full, Full},
+WindowMargins->{{352, Automatic}, {Automatic, 50}},
+FrontEndVersion->"12.3 for Mac OS X ARM (64-bit) (September 30, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"383a5c4c-a7dc-4ebf-af87-a9a3d36ffae5"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 164, 3, 98, "Title",ExpressionUUID->"e6353dfe-c4ea-4c5f-8412-0ef0b190bf16"],
+Cell[747, 27, 217, 5, 53, "Subtitle",ExpressionUUID->"1428bc16-c6bb-4b04-8ddf-e2d61774c5de"],
+Cell[CellGroupData[{
+Cell[989, 36, 220, 4, 67, "Section",ExpressionUUID->"537b5d3c-adf6-40bd-9b3c-0508043af8a0"],
+Cell[1212, 42, 329, 7, 35, "Text",ExpressionUUID->"1e0a4967-d4c2-46a0-bbd1-3a225a2d02e9"],
+Cell[1544, 51, 670, 12, 28, "DisplayFormulaNumbered",ExpressionUUID->"0e078e16-ef9f-4a83-b09a-775ef0ef682f"],
+Cell[2217, 65, 388, 8, 35, "Text",ExpressionUUID->"659d1a30-bb55-4ead-9156-eea272697f1b"],
+Cell[2608, 75, 814, 19, 51, "DisplayFormulaNumbered",ExpressionUUID->"b861ade1-9a9c-4124-bef8-ad82dedc6384"],
+Cell[3425, 96, 296, 7, 35, "Text",ExpressionUUID->"9ca2f716-36b8-42c7-b13e-e149a5606813"],
+Cell[3724, 105, 991, 24, 28, "DisplayFormulaNumbered",ExpressionUUID->"515b1456-9991-49ef-8569-81674bb11a9f"],
+Cell[4718, 131, 393, 8, 35, "Text",ExpressionUUID->"b11267e2-e9a3-49f3-8b4e-9d23ca3c840b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5148, 144, 330, 5, 67, "Section",ExpressionUUID->"18637c53-2304-4cde-b949-09019aaf100c"],
+Cell[5481, 151, 686, 12, 58, "Text",ExpressionUUID->"a4e11012-62df-43cf-b269-7b63ce7e0652"],
+Cell[CellGroupData[{
+Cell[6192, 167, 167, 3, 45, "Subsubsection",ExpressionUUID->"2434ea05-b225-48e2-9b37-453daf5d7604"],
+Cell[6362, 172, 783, 17, 60, "Text",ExpressionUUID->"21c3fe04-03cc-4a75-8f9f-9666a4ca758d"],
+Cell[7148, 191, 978, 25, 28, "DisplayFormulaNumbered",ExpressionUUID->"fe9a7f0c-7056-4edb-b40e-8d5d186ff3ff"],
+Cell[8129, 218, 789, 17, 60, "Text",ExpressionUUID->"5054998a-0aa3-40b4-bee9-6e466b4ce9d1"],
+Cell[8921, 237, 737, 17, 28, "DisplayFormulaNumbered",ExpressionUUID->"1486f235-d182-4044-83cf-b81306797a57"],
+Cell[9661, 256, 180, 3, 35, "Text",ExpressionUUID->"ccf38b97-78bb-4244-bd71-63189771e85c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9878, 264, 233, 4, 45, "Subsubsection",ExpressionUUID->"9993f284-a914-43af-a70b-8a673357b178"],
+Cell[10114, 270, 459, 9, 58, "Text",ExpressionUUID->"b5ccecc6-11f6-4eaa-adc7-8cc6c41d56d3"],
+Cell[10576, 281, 1326, 35, 51, "DisplayFormulaNumbered",ExpressionUUID->"f5522afb-29d5-4902-83aa-b6f3ca78ade4"],
+Cell[11905, 318, 637, 16, 37, "Text",ExpressionUUID->"3b9a61e4-4803-41d3-91cb-e46623ea5579"],
+Cell[12545, 336, 1308, 32, 51, "DisplayFormulaNumbered",ExpressionUUID->"63ea5723-542e-4b38-a128-4f075279846c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
