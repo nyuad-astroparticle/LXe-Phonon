@@ -52,7 +52,7 @@ class estimator(object):
         # Create the terms
         print(bcolors.BOLD+'Generating Estimator for order %d'%self.max_order+bcolors.ENDC)
         self.assemble_multiprocessing(simplify=simplify)
-        if self.GPU: print(bcolors.BOLD+bcolors.WARNING+'WARNING!'+bcolors.ENDC+' Since you are using GPU accelleration you need to check that your input satisfies these conditions z < v t and (z-v t)^2 > r^2 (v^2 - 1). Otherwise there will be errors')
+        if self.GPU: print(bcolors.BOLD+bcolors.WARNING+'WARNING!'+bcolors.ENDC+' Since you are using GPU accelleration you need to check that your input satisfies v*t - (z+r*np.sqrt(v**2-1)). Otherwise there will be errors')
     
     # Coefficient
     def C(self,n:int,m:int):
@@ -67,7 +67,7 @@ class estimator(object):
     def T(self,r,z,t,v,sgn=1):
         gamma_sq = 1/(1-v**2)
         # return gamma_sq*(t - v*z) + sgn*sp.sqrt(gamma_sq**2*(z-v*t)**2 + gamma_sq*r**2)
-        return gamma_sq*(t - v*z) + gamma_sq*sgn*sp.sqrt((z-v*t)**2 + 1/gamma_sq*r**2)
+        return gamma_sq*(t - v*z) + gamma_sq*sgn*sp.sqrt((z-v*t)**2 + r**2/gamma_sq)
 
     # Get slow term
     def get_slow_term(self,n:int,m:int,
@@ -101,6 +101,8 @@ class estimator(object):
 
         # Substitute solutions
         der = der.subs(T,self.T(r,z,t,v,sgn=-1)) + der.subs(T,self.T(r,z,t,v,sgn=1))
+
+        # print(sp.mathematica_code(der))
 
         # Calculate the final derivative
         return sp.diff(der,t,n+1)
@@ -216,7 +218,8 @@ class estimator(object):
                     
                 else:
                     f = lambdify([r,z,t,v,L], f,'numpy')
-                    g = (lambda F: lambda r,z,t,v,L: 0. if abs(z-v*t) <= r*np.sqrt(v**2 - 1) or (z-v*t) > 0. else F(r,z,t,v,L))(f)
+                    g = (lambda F: lambda r,z,t,v,L: 0. if v*t - (z+r*np.sqrt(v**2-1)) < 0. else F(r,z,t,v,L))(f)
+                    # g = (lambda F: lambda r,z,t,v,L: F(r,z,t,v,L))(f)
                     self.terms.append(np.vectorize(g,excluded=['v','L']))
 
         print(bcolors.BOLD+bcolors.UNDERLINE+'Estimator Generated Successfully'+bcolors.ENDC)
