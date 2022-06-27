@@ -13,7 +13,7 @@
 #################################################################
 
 from numpy import math
-import autograd.numpy as np
+import numpy as np
 import sympy as sp
 import scipy.constants as c
 from multiprocessing import Pool
@@ -48,6 +48,7 @@ class estimator(object):
         self.GPU        = GPU           # Do you want to use CUDA for evaluating the function?
         self.slow       = slow          # Store if this is for particles with v<1
         self.terms      = []            # A list for the terms to be calculated
+        self.sterms     = []            # List with the sympy terms of the estimator
 
         # Create the terms
         print(bcolors.BOLD+'Generating Estimator for order %d'%self.max_order+bcolors.ENDC)
@@ -149,6 +150,24 @@ class estimator(object):
             self.terms.append(np.vectorize(g,excluded=['v','L']))
             print("\t"+bcolors.OKBLUE+"Fast:"+bcolors.ENDC+"%2d,%2d "%(n,m)+bcolors.OKGREEN+"Done!"+bcolors.ENDC)
 
+    # Get Jacobian
+    def get_jacobian(self):
+        # Define some symbols
+        v       = sp.Symbol('v')
+        L       = sp.Symbol('L')
+        r       = sp.Symbol('r')
+        t       = sp.Symbol('t')
+        z       = sp.Symbol('z')
+
+        # Sum all the terms together
+        SUM = sum(self.sterms)
+
+        # Calculate jacobian
+        M = sp.Matrix([SUM])
+        J = M.jacobian([t,z])
+
+        # Return the lambdified function
+        return lambdify([r,z,t,v,L],J,'numpy')
 
     # If you want to use multiprocessing
     # This function will assemble all the proccesses needed
@@ -206,6 +225,7 @@ class estimator(object):
         # Assign the functions to the appropriate arrays
         print('recasting functions')
         TERMS = terms.get()
+        self.sterms = TERMS.copy()
         for f in tqdm(TERMS):
             if self.slow:
                 if self.GPU: self.terms.append(lambdify([r,z,t,v,L],f,'cupy'))
