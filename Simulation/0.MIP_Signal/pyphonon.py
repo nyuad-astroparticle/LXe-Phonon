@@ -169,6 +169,24 @@ class estimator(object):
         # Return the lambdified function
         return lambdify([r,z,t,v,L],J,'numpy')
 
+    # Get Hessian
+    def get_hessian(self):
+        # Define some symbols
+        v       = sp.Symbol('v')
+        L       = sp.Symbol('L')
+        r       = sp.Symbol('r')
+        t       = sp.Symbol('t')
+        z       = sp.Symbol('z')
+
+        # Sum all the terms together
+        SUM = sum(self.sterms)
+
+        # Calculate jacobian
+        H = sp.hessian(SUM,[t,z])
+
+        # Return the lambdified function
+        return lambdify([r,z,t,v,L],H,'numpy')
+
     # If you want to use multiprocessing
     # This function will assemble all the proccesses needed
     def get_permutations(self,simplify:bool=False,variables:bool=False):
@@ -341,7 +359,7 @@ class particle:
         return [float(l.split(':')[-1]) for l in data.split('\n')[:3]]
     
     def __call__(self,v:float):
-        self.v = v
+        self.speed = v
         
     
     
