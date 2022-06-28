@@ -330,7 +330,7 @@ class fluid:
     
     # And the actual coefficient in front of the distribution of the thing
     def energy_deposition(self,particle,x:float=1):
-        return self.source_multiplier() * particle.speed * self.max_energy(particle,x=x)
+        return self.source_multiplier() * particle.speed * self.max_energy(particle,x=x) * c.electron_volt * 1e6/x
     
     # Get the viscosity coefficient
     def viscosity_coefficient(self):
