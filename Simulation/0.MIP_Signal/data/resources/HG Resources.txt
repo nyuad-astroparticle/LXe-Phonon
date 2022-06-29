@@ -1,0 +1,40 @@
+Temperature: 298.15 K
+
+Source 1:
+https://www.reaxys.com/#/search/quick
+	-rest_density 
+		+https://www.sciencedirect.com/science/article/pii/S002236970500329X?via%3Dihub
+
+	-thermal expansion
+		+https://www.sciencedirect.com/science/article/pii/S0921452606008532
+
+
+-------------------------------------------
+
+Source 2:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+	-molar mass
+	-mean_excitation_energy
+
+-------------------------------------------
+
+Source 3
+https://link.springer.com/referenceworkentry/10.1007/978-1-4614-1533-6_307#:~:text=Physical%20Properties,is%20liquid%20at%20room%20temperature.&text=Due%20to%20its%20high%20surface,a%20thick%20silvery%20amalgam%20paste.
+
+	-viscosity
+	-specific_heat_p
+
+-----------------------------------------------------
+
+Source 4:
+J. Chem. Phys. 46, 2650 (1967); https://doi.org/10.1063/1.1841095
+
+	-sound_speed
+
+-----------------------------------------------------
+
+Source 5:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 28597944135.999996 Pa = 2.860e10 Pa

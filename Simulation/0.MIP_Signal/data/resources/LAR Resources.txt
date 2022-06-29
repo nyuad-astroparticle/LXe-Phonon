@@ -1,35 +1,41 @@
+Temperature: 84 K
+
 Source 1:
 https://webbook.nist.gov/cgi/inchi?ID=C7440371&Mask=4
 
 	-viscosity
 	-sound_speed
+	-rest_density
 
 -----------------------------------------------------
 
 Source 2:
 https://www.reaxys.com/#/organization
 
-	-specific_heat_p
-		+Eucken[Verhandlungen der Deutschen Physikalischen Gesellschaft, 1916, vol. 18, p. 10 - 10]
-		+No author[Gmelin Handbuch der Anorganischen Chemie, Gmelin Handbook: He: Edelgase/MVol., 37, page 144 - 146]
-
 	-thermal_expansion
-		+Rao, R. V. Gopala; Dutta, S. K.[Zeitschrift fur Physikalische Chemie (Leipzig), 1983, vol. 264, # 4, p.
-
-	-
+		+https://www.degruyter.com/document/doi/10.1515/zpch-1983-26493/html
 
 -----------------------------------------------------
 
 Source 3:
-https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+https://lar.bnl.gov/properties/
 
-	-mean_excitation_energy
-	-rest_density
+	-specific_heat_p
+		+https://www.phy.bnl.gov/~chao/docs/Properties-of-LAr-v9a-thorn.pdf
 
 -----------------------------------------------------
 
 Source 4:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+
+	-mean_excitation_energy
+	-molar_mass
+	-atomic_number
+
+-----------------------------------------------------
+
+Source 5:
 Calculations
 
 Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
-Bulk_Modulus = 981479410.2 Pa = 9.815e8 Pa
+Bulk_Modulus = 1050055926.6423777.2 Pa = 1.0500559e9 Pa

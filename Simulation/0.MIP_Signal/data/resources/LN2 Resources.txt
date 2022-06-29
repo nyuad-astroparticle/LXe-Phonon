@@ -1,0 +1,30 @@
+Temperature: 77 K
+
+Source 1:
+https://webbook.nist.gov/cgi/fluid.cgi?T=77.15&PLow=0&PHigh=2&PInc=0.001&Applet=on&Digits=5&ID=C7727379&Action=Load&Type=IsoTherm&TUnit=K&PUnit=atm&DUnit=kg%2Fm3&HUnit=kJ%2Fkg&WUnit=m%2Fs&VisUnit=Pa*s&STUnit=N%2Fm&RefState=DEF
+	-rest_density
+	-viscosity
+	-sound_speed
+	-heat_capacity
+
+-----------------------------------------------------
+
+Source 2:
+https://www.degruyter.com/document/doi/10.1515/zpch-1983-26493/html
+	- thermal_expansion
+
+-----------------------------------------------------
+
+Source 3:
+https://pdg.lbl.gov/2022/AtomicNuclearProperties/index.html
+	-mean_excitation_energy
+	-molar_mass
+	-atomic_number
+
+-----------------------------------------------------
+
+Source 4:
+Calculations
+
+Bulk_Modulus = (Sound_Speed^2)(Rest_Density)
+Bulk_Modulus = 588014728.2 Pa = 5.88014e8 Pa

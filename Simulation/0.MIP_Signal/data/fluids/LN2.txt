@@ -1,0 +1,9 @@
+rest_density(kg/m3):	807.2
+viscosity(Pa*s):	1.6198e-4
+sound_speed(m/s):	853.5
+bulk_modulus(kg/s2m):	5.88014e8
+specific_heat_p(J/kgK):	2040.5
+thermal_expansion(/K):	0.00556
+mean_excitation_energy(J):  1.31378e-17
+molar_mass(u):		14.007
+atomic_number():	14
