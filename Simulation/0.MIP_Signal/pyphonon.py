@@ -62,7 +62,7 @@ class estimator(object):
     # Define the source function
     def q(self,t):
         # return sp.Heaviside(t)
-        return 1/(1+sp.exp(-100 * (t-0)))
+        return 1/(1+sp.exp(-1e6 * (t-0)))
 
     # Solutions
     def T(self,r,z,t,v,sgn=1):
