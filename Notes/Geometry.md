@@ -127,7 +127,7 @@ $$
 X: M\to TM\\
 p \in M \mapsto X(p) \coloneqq X_p \in T_pM \subset TM
 $$
-We want vector fields to be such that $\pi(X(p)) = p$.
+We want vector fields to be such that $\pi(X(p)) = p$, i.e. $\pi \circ X = id_M\ \forall X \in \mathfrak{X}(M)$
 
 **<u>*Corollary:*</u>** A vector field is a section of the tangent Bundle $TM$ (i.e. a path that covers all of the points $p \in M$)
 
