@@ -145,11 +145,66 @@ Ok now, that we have some very basic constructions defined, it is time to define
 
 
 
+**<u>Definition:</u>** Given a vector field $X \in \mathfrak{X}(M)$ we can define an **integral curve** $\gamma: \mathbb{R} \supset I \to M$  through $p\in M$ iff
 
+1. $$\gamma(0) = p$$
+2. $$\dot{\gamma}(t) = X_{\gamma(t)} \ \forall t\in I$$
 
+**<u>*Theorem:*</u>** Give a vector field $X$ and a point $p \in M$ we can always find a unique integral curve of $X$ at $p$. 
 
+***<u>Theorem:</u>*** For all $p\in M$ there exists a neigborhood $U \subset M$ of $p$ and an open interval $I$ around $0$ such that the integral curves $\gamma_q$ are defined on $I$ for all $q \in U$. We can even create a map
+$$
+\begin{align}
+\phi_U:U\times I &\to M\\
+(q,t) &\mapsto \gamma_q(t)
+\end{align}
+$$
+that is differentiable and is called a **local flow** of $X$.
 
+We can also create a global flow $\phi$ of $X$ on $M$ iff the manifold is closed (compact without boundary). In this case $\phi(\cdot,t):M\to M$ is a diffeomorphism.
 
+***<u>Theorem (Integral Curves of Left-Invariant Vector Fields):</u>*** Consider a lie group $G$ and its Lie algebra $\mathfrak{g}$. Let
+$$
+\begin{align}
+\phi_X:\mathbb{R} \supset I &\to G\\
+t &\mapsto \phi_X(t) \in G
+\end{align}
+$$
+to be the maximal integral curve of a vector field $X \in \mathfrak{g}$ that passes through the neutral element $e \in G$. Then the following hold:
 
+1. $\phi_X$ is define on all $\mathbb{R}$.
 
+2. $\phi_X: \mathbb{R} \to G$ is a Lie Group Homomorphism
+   $$
+   \phi_X(s+t)=\phi_X(s)\cdot\phi_X(t)\ \forall s,t \in \mathbb{R}
+   $$
+
+3. $\phi_{sX}(t) = \phi_X(st),\ \forall s,t \in \mathbb{R}$
+
+**<u>Definition:</u>** We define the **exponential map**
+$$
+\begin{align}
+\exp: \mathfrak{g} &\to G\\
+X&\mapsto \exp(X) = \phi_X(1)
+\end{align}
+$$
+where $\phi_X$ is the integral curve of some left invariant vector field $X \in \mathfrak{g}$ through the identity $e \in G$.
+
+**<u>*Proposition:*</u>** The exponential map has the following properties
+
+1. $\exp(0) = e$
+2. $\exp((s+t)X) = \exp(sX)\cdot \exp(tX)$
+3. $\exp(-X) = (\exp X)^{-1}$
+
+***Proof:*** The proof of the statement above is simply through direct calculation. 
+
+1. $\exp(0) = \phi_0(1) = \phi_{0\cdot X}(1) = \phi_{X}(0) = e$ where $X \in \mathfrak{g}$ is some element of the Lie agebra.
+
+2. Follows directly from the fact that the maximal integral curve is a lie group homomorphism. 
+
+3. By using (2) and (1) we have:
+
+   $e=\exp{0}=\exp((1-1)X) = \exp(X)\cdot \exp(-X)$ 
+
+   which implies the statement.
 
