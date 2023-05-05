@@ -184,9 +184,13 @@ And as one might expect, we state this with proof as an exercise.
 
 Now for some physics terms (finally).
 
-**<u>Definition:</u>** Let $\phi:\mathfrak{g}\to \text{End}(V)$ be a skew-hermitian (we also sometimes refer to it as unitary for some reason making the definitions aobove infinitely more confusing) representation of a real Lie algebra $\mathfrak{g}$ on some complex vector space $V$. Then $\forall X\in \mathfrak{g}$, $\phi(X)$ is a skew hermitian endomorphism, implying that $i\phi(X)$ is a hermitian endomorphism (notice that this endomorphism is actually invertible since $\phi$ is skew hermitian). We call the eigenvalues of $-i\phi(X)$ the **charges** of $X$ in the representation $\phi$.
+**<u>Definition:</u>** Let $\phi:\mathfrak{g}\to \text{End}(V)$ be a skew-hermitian (we also sometimes refer to it as unitary for some reason making the definitions aobove infinitely more confusing) representation of a real Lie algebra $\mathfrak{g}$ on some complex vector space $V$. Then $\forall X\in \mathfrak{g}$ $\phi(X)$ is a skew hermitian endomorphism, implying that $i\phi(X)$ is a hermitian endomorphism (notice that this endomorphism is actually invertible since $\phi$ is skew hermitian). We call the eigenvalues of $-i\phi(X)$ the **charges** of $X$ in the representation $\phi$.
 
 The negative sign is obviously a convention originating form the fact that positive charge is positive. 
+
+
+
+**<u>Definition:</u>** A
 
 
 
@@ -312,15 +316,15 @@ and that
 $$
 \text{tr}(f) = f^i_i
 $$
-Now consider a linear isomorphism $\phi \in \text{End}(\mathfrak{g})$ we can change the basis of $\mathfrak{g}$ simply by performing $\phi \circ f \circ \phi^{-1}$. We can show thta the trace is invariant to this as:
+Now consider a linear isomorphism $\phi \in \text{End}(\mathfrak{g})$ we can change the basis of $\mathfrak{g}$ simply by performing $\phi \circ f \circ \phi^{-1}$. We can show that the trace is invariant to this as:
 $$
-\begin{align}
+\begin{align*}
 \text{tr}(\phi \circ f \circ \phi^{-1})
 &= (\phi \circ f)^i_j (\phi^{-1})^j_i\\
 &= (\phi^{-1})^i_j (\phi \circ f)^j_i\\
 &= \text{tr}(\phi \circ \phi^{-1} \circ f)\\
 &= \tr(f)
-\end{align}
+\end{align*}
 $$
 Therfore, we know that the trace is symmetric.
 
@@ -333,12 +337,5 @@ $$
 A nice application of this theorem is the fact that the Killing form is invariant under the Lie algebra automorphism $\text{Ad}_g\ \forall g\in G$.
 
 **<u>*Corollary:*</u>** The killing form $B$ defines a bi-invariant symmetric form on any Lie group $G$.
-
-
-
-
-
-
-
 
 
